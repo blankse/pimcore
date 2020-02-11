@@ -17,6 +17,8 @@
 
 namespace Pimcore\Model\DataObject;
 
+use Nette\PhpGenerator\PhpFile;
+use Nette\PhpGenerator\PsrPrinter;
 use Pimcore\Cache;
 use Pimcore\Db;
 use Pimcore\Event\DataObjectClassDefinitionEvents;
@@ -355,95 +357,88 @@ class ClassDefinition extends Model\AbstractModel
             File::mkdir(PIMCORE_CLASS_DIRECTORY.'/DataObject');
         }
 
-        $cd = '<?php ';
-        $cd .= "\n\n";
-        $cd .= $infoDocBlock;
-        $cd .= "\n\n";
-        $cd .= 'namespace Pimcore\\Model\\DataObject;';
-        $cd .= "\n\n";
-        $cd .= 'use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;';
-        $cd .= "\n";
-        $cd .= 'use Pimcore\Model\DataObject\PreGetValueHookInterface;';
-        $cd .= "\n\n";
-        $cd .= "/**\n";
+        $file = new PhpFile;
+        $file->addComment($infoDocBlock);
+
+        $namespace = $file->addNamespace('Pimcore\\Model\\DataObject');
+
+        $file->addUse(DataObject\Exception\InheritanceParentNotFoundException::class);
+        $file->addUse(PreGetValueHookInterface::class);
+
+        $class = $namespace->addClass(ucfirst($this->getName()))->addExtend($extendClass);
+
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
             foreach ($this->getFieldDefinitions() as $key => $def) {
                 if ($def instanceof DataObject\ClassDefinition\Data\Localizedfields) {
-                    $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst(
+                    $class->addComment(
+                        '@method static \\Pimcore\\Model\\DataObject\\'.ucfirst(
                             $this->getName()
                         ).'\Listing|\\Pimcore\\Model\\DataObject\\'.ucfirst(
                             $this->getName()
                         ).' getBy'.ucfirst(
                             $def->getName()
-                        ).' ($field, $value, $locale = null, $limit = 0) '."\n";
+                        ).'($field, $value, $locale = null, $limit = 0)'
+                    );
 
                     foreach ($def->getFieldDefinitions() as $localizedFieldDefinition) {
-                        $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst(
+                        $class->addComment(
+                            '@method static \\Pimcore\\Model\\DataObject\\'.ucfirst(
                                 $this->getName()
                             ).'\Listing|\\Pimcore\\Model\\DataObject\\'.ucfirst(
                                 $this->getName()
                             ).' getBy'.ucfirst(
                                 $localizedFieldDefinition->getName()
-                            ).' ($value, $locale = null, $limit = 0) '."\n";
+                            ).'($value, $locale = null, $limit = 0)'
+                        );
                     }
                 } elseif ($def->isFilterable()) {
-                    $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst(
+                    $class->addComment(
+                        '@method static \\Pimcore\\Model\\DataObject\\'.ucfirst(
                             $this->getName()
                         ).'\Listing|\\Pimcore\\Model\\DataObject\\'.ucfirst(
                             $this->getName()
-                        ).' getBy'.ucfirst($def->getName()).' ($value, $limit = 0) '."\n";
+                        ).' getBy'.ucfirst($def->getName()).'($value, $limit = 0)'
+                    );
                 }
             }
         }
-        $cd .= "*/\n\n";
 
-        $implementsBlock = '\\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface';
+        $class->addImplement(DirtyIndicatorInterface::class);
         if ($this->getCacheRawRelationData()) {
-            $implementsBlock .= ',\\Pimcore\\Model\\DataObject\\CacheRawRelationDataInterface';
+            $class->addImplement(CacheRawRelationDataInterface::class);
         }
 
-        $cd .= 'class '.ucfirst($this->getName()).' extends '.$extendClass.' implements ' . $implementsBlock . ' {';
-        $cd .= "\n\n";
-
-        $cd .= 'use \Pimcore\Model\DataObject\Traits\DirtyIndicatorTrait;';
-        $cd .= "\n\n";
+        $class->addTrait(DataObject\Traits\DirtyIndicatorTrait::class);
 
         if ($this->getCacheRawRelationData()) {
-            $cd .= 'use \Pimcore\Model\DataObject\Traits\CacheRawRelationDataTrait;';
-            $cd .= "\n\n";
+            $class->addTrait(DataObject\Traits\CacheRawRelationDataTrait::class);
         }
 
         if ($this->getUseTraits()) {
-            $cd .= 'use '.$this->getUseTraits().";\n";
-            $cd .= "\n";
+            $class->addTrait($this->getUseTraits());
         }
 
-        $cd .= 'protected $o_classId = "' . $this->getId(). "\";\n";
-        $cd .= 'protected $o_className = "'.$this->getName().'"'.";\n";
+        $class->addProperty('o_classId', $this->getId())->setProtected();
+        $class->addProperty('o_className', $this->getName())->setProtected();
 
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
             foreach ($this->getFieldDefinitions() as $key => $def) {
                 if (!$def instanceof DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation && !$def instanceof DataObject\ClassDefinition\Data\CalculatedValue
                 ) {
-                    $cd .= 'protected $'.$key.";\n";
+                    $class->addProperty($key)->setProtected();
                 }
             }
         }
 
-        $cd .= "\n\n";
+        $method = $class->addMethod('create')
+            ->addComment('@param array $values')
+            ->addComment('@return \\Pimcore\\Model\\DataObject\\' . ucfirst($this->getName()))
+            ->setStatic()
+            ->addBody('$object = new static();')
+            ->addBody('$object->setValues($values);')
+            ->addBody('return $object;');
 
-        $cd .= '/**'."\n";
-        $cd .= '* @param array $values'."\n";
-        $cd .= '* @return \\Pimcore\\Model\\DataObject\\'.ucfirst($this->getName())."\n";
-        $cd .= '*/'."\n";
-        $cd .= 'public static function create($values = array()) {';
-        $cd .= "\n";
-        $cd .= "\t".'$object = new static();'."\n";
-        $cd .= "\t".'$object->setValues($values);'."\n";
-        $cd .= "\t".'return $object;'."\n";
-        $cd .= '}';
-
-        $cd .= "\n\n";
+        $method->addParameter('values', []);
 
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
             foreach ($this->getFieldDefinitions() as $key => $def) {
@@ -462,14 +457,13 @@ class ClassDefinition extends Model\AbstractModel
             }
         }
 
-        $cd .= "}\n";
-        $cd .= "\n";
-
         $classFile = PIMCORE_CLASS_DIRECTORY.'/DataObject/'.ucfirst($this->getName()).'.php';
         if (!is_writable(dirname($classFile)) || (is_file($classFile) && !is_writable($classFile))) {
             throw new \Exception('Cannot write class file in '.$classFile.' please check the rights on this directory');
         }
-        File::put($classFile, $cd);
+
+        $printer = new PsrPrinter();
+        File::put($classFile, $printer->printFile($file));
 
         // create class for object list
         $extendListingClass = 'DataObject\\Listing\\Concrete';
@@ -479,30 +473,21 @@ class ClassDefinition extends Model\AbstractModel
         }
 
         // create list class
-        $cd = '<?php ';
+        $file = new PhpFile;
+        $namespace = $file->addNamespace('Pimcore\\Model\\DataObject\\' . ucfirst($this->getName()));
 
-        $cd .= "\n\n";
-        $cd .= 'namespace Pimcore\\Model\\DataObject\\'.ucfirst($this->getName()).';';
-        $cd .= "\n\n";
-        $cd .= 'use Pimcore\\Model\\DataObject;';
-        $cd .= "\n\n";
-        $cd .= "/**\n";
-        $cd .= ' * @method DataObject\\'.ucfirst($this->getName())." current()\n";
-        $cd .= ' * @method DataObject\\'.ucfirst($this->getName())."[] load()\n";
-        $cd .= ' */';
-        $cd .= "\n\n";
-        $cd .= 'class Listing extends '.$extendListingClass.' {';
-        $cd .= "\n\n";
+        $file->addUse(DataObject::class);
+        $class = $namespace->addClass('Listing')
+            ->addExtend($extendListingClass)
+            ->addComment('@method DataObject\\' . ucfirst($this->getName()) . ' current()')
+            ->addComment('@method DataObject\\' . ucfirst($this->getName()) . '[] load()');
 
         if ($this->getListingUseTraits()) {
-            $cd .= 'use '.$this->getListingUseTraits().";\n";
-            $cd .= "\n";
+            $class->addTrait($this->getListingUseTraits());
         }
 
-        $cd .= 'protected $classId = "'. $this->getId()."\";\n";
-        $cd .= 'protected $className = "'.$this->getName().'"'.";\n";
-
-        $cd .= "\n\n";
+        $class->addProperty('classId', $this->getId())->setProtected();
+        $class->addProperty('className', $this->getName())->setProtected();
 
         if (\is_array($this->getFieldDefinitions())) {
             foreach ($this->getFieldDefinitions() as $key => $def) {
@@ -516,9 +501,6 @@ class ClassDefinition extends Model\AbstractModel
             }
         }
 
-        $cd .= "\n\n";
-        $cd .= "}\n";
-
         File::mkdir(PIMCORE_CLASS_DIRECTORY.'/DataObject/'.ucfirst($this->getName()));
 
         $classListFile = PIMCORE_CLASS_DIRECTORY.'/DataObject/'.ucfirst($this->getName()).'/Listing.php';
@@ -527,7 +509,7 @@ class ClassDefinition extends Model\AbstractModel
                 'Cannot write class file in '.$classListFile.' please check the rights on this directory'
             );
         }
-        File::put($classListFile, $cd);
+        File::put($classListFile, $printer->printFile($file));
 
         // save definition as a php file
         $definitionFile = $this->getDefinitionFile();
@@ -580,36 +562,27 @@ class ClassDefinition extends Model\AbstractModel
      */
     protected function getInfoDocBlock()
     {
-        $cd = '';
-
-        $cd .= '/** ';
-        $cd .= "\n";
-        $cd .= '* Generated at: '.date('c')."\n";
-        $cd .= '* Inheritance: '.($this->getAllowInherit() ? 'yes' : 'no')."\n";
-        $cd .= '* Variants: '.($this->getAllowVariants() ? 'yes' : 'no')."\n";
+        $cd = 'Generated at: '.date('c')."\n";
+        $cd .= 'Inheritance: '.($this->getAllowInherit() ? 'yes' : 'no')."\n";
+        $cd .= 'Variants: '.($this->getAllowVariants() ? 'yes' : 'no')."\n";
 
         $user = Model\User::getById($this->getUserModification());
         if ($user) {
-            $cd .= '* Changed by: '.$user->getName().' ('.$user->getId().')'."\n";
+            $cd .= 'Changed by: '.$user->getName().' ('.$user->getId().')'."\n";
         }
 
         if (isset($_SERVER['REMOTE_ADDR'])) {
-            $cd .= '* IP: '.$_SERVER['REMOTE_ADDR']."\n";
+            $cd .= 'IP: '.$_SERVER['REMOTE_ADDR']."\n";
         }
 
         if ($this->getDescription()) {
-            $description = str_replace(['/**', '*/', '//'], '', $this->getDescription());
-            $description = str_replace("\n", "\n* ", $description);
-
-            $cd .= '* '.$description."\n";
+            $cd .= $this->getDescription()."\n";
         }
 
         $cd .= "\n\n";
         $cd .= "Fields Summary: \n";
 
         $cd = $this->getInfoDocBlockForFields($this, $cd, 1);
-
-        $cd .= '*/ ';
 
         return $cd;
     }
