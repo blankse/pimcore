@@ -118,6 +118,7 @@
     "composer/composer": "*"
   },
   "suggest": {
+    "ext-com_dotnet": "Required for background commands on windows",
     "ext-curl": "*",
     "ext-imagick": "*",
     "ext-redis": "*",

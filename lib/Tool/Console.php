@@ -278,9 +278,8 @@ class Console
     public static function runPhpScript($script, $arguments = '', $outputFile = null, $timeout = null)
     {
         $cmd = self::buildPhpScriptCmd($script, $arguments);
-        $return = self::exec($cmd, $outputFile, $timeout);
 
-        return $return;
+        return self::exec($cmd, $outputFile, $timeout);
     }
 
     /**
@@ -293,9 +292,8 @@ class Console
     public static function runPhpScriptInBackground($script, $arguments = '', $outputFile = null)
     {
         $cmd = self::buildPhpScriptCmd($script, $arguments);
-        $return = self::execInBackground($cmd, $outputFile);
 
-        return $return;
+        return self::execInBackground($cmd, $outputFile);
     }
 
     /**
@@ -308,7 +306,6 @@ class Console
     public static function exec($cmd, $outputFile = null, $timeout = null)
     {
         if ($timeout && self::getTimeoutBinary()) {
-
             // check if --kill-after flag is supported in timeout
             if (self::$timeoutKillAfterSupport === null) {
                 $out = self::exec(self::getTimeoutBinary() . ' --help');
@@ -339,9 +336,8 @@ class Console
         }
 
         Logger::debug('Executing command `' . $cmd . '` on the current shell');
-        $return = shell_exec($cmd);
 
-        return $return;
+        return shell_exec($cmd);
     }
 
     /**
@@ -354,15 +350,15 @@ class Console
      */
     public static function execInBackground($cmd, $outputFile = null)
     {
-
         // windows systems
-        if (self::getSystemEnvironment() == 'windows') {
+        if (self::getSystemEnvironment() === 'windows') {
             return self::execInBackgroundWindows($cmd, $outputFile);
-        } elseif (self::getSystemEnvironment() == 'darwin') {
-            return self::execInBackgroundUnix($cmd, $outputFile, false);
-        } else {
-            return self::execInBackgroundUnix($cmd, $outputFile);
         }
+        if (self::getSystemEnvironment() === 'darwin') {
+            return self::execInBackgroundUnix($cmd, $outputFile, false);
+        }
+
+        return self::execInBackgroundUnix($cmd, $outputFile);
     }
 
     /**
@@ -424,6 +420,10 @@ class Console
      */
     protected static function execInBackgroundWindows($cmd, $outputFile)
     {
+        if (!extension_loaded('com_dotnet')) {
+            throw new \Exception('Pimcore required the com_dotnet PHP Extension to run background commands on windows');
+        }
+
         if (!$outputFile) {
             $outputFile = 'NUL';
         }
