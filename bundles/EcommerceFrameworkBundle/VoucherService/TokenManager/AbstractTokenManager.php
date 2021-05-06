@@ -17,7 +17,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherSeries;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherTokenType;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
 use Pimcore\Model\DataObject\OnlineShopVoucherSeries;
@@ -56,18 +55,15 @@ abstract class AbstractTokenManager implements TokenManagerInterface, Exportable
     abstract public function cleanUpCodes($filter = []);
 
     /**
-     * @param string $code
-     * @param CartInterface $cart
-     *
-     * @return mixed
-     *
-     * @throws VoucherServiceException When validation fails for any reason
+     * {@inheritdoc}
      */
     public function checkToken($code, CartInterface $cart)
     {
         $this->checkVoucherSeriesIsPublished($code);
         $this->checkAllowOncePerCart($code, $cart);
         $this->checkOnlyToken($cart);
+
+        return true;
     }
 
     /**
@@ -83,7 +79,6 @@ abstract class AbstractTokenManager implements TokenManagerInterface, Exportable
         if (!$token) {
             throw new VoucherServiceException("No token found for code '" . $code . "'", VoucherServiceException::ERROR_CODE_NO_TOKEN_FOR_THIS_CODE_EXISTS);
         }
-        /** @var OnlineShopVoucherSeries|null $series */
         $series = OnlineShopVoucherSeries::getById($token->getVoucherSeriesId());
         if (!$series) {
             throw new VoucherServiceException("No voucher series found for token '" . $token->getToken() . "' (ID " . $token->getId() . ')', VoucherServiceException::ERROR_CODE_NO_TOKEN_FOR_THIS_CODE_EXISTS);
@@ -287,11 +282,9 @@ abstract class AbstractTokenManager implements TokenManagerInterface, Exportable
     abstract public function getFinalTokenLength();
 
     /**
-     * @param int $duration
-     *
-     * @return bool
+     * {@inheritdoc}
      */
-    abstract public function cleanUpReservations($duration = 0);
+    abstract public function cleanUpReservations($duration = 0, $seriesId = null);
 
     /**
      * @param array $viewParamsBag

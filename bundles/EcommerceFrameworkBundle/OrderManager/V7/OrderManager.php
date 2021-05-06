@@ -466,10 +466,9 @@ class OrderManager implements OrderManagerInterface
 
         $orderItem->setAmount($item->getCount());
         $orderItem->setProduct($item->getProduct());
-        if ($item->getProduct()) {
-            $orderItem->setProductName($item->getProduct()->getOSName());
-            $orderItem->setProductNumber($item->getProduct()->getOSProductNumber());
-        }
+        $itemProduct = $item->getProduct();
+        $orderItem->setProductName($itemProduct->getOSName());
+        $orderItem->setProductNumber($itemProduct->getOSProductNumber());
         $orderItem->setComment($item->getComment());
 
         $price = Decimal::zero();

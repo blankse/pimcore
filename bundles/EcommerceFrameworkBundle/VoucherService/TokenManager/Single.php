@@ -57,6 +57,9 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
         return true;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function cleanupReservations($duration = 0, $seriesId = null)
     {
         return Reservation::cleanUpReservations($duration, $seriesId);
@@ -276,10 +279,7 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
     }
 
     /**
-     * @param string $code
-     * @param CartInterface $cart
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function checkToken($code, CartInterface $cart)
     {

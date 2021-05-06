@@ -80,12 +80,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
     }
 
     /**
-     * @param string $code
-     * @param CartInterface $cart
-     *
-     * @throws VoucherServiceException
-     *
-     * @return bool|int
+     * {@inheritdoc}
      */
     public function checkToken($code, CartInterface $cart)
     {
@@ -605,13 +600,9 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
     }
 
     /**
-     * Removes reservations
-     *
-     * @param int $duration
-     *
-     * @return bool
+     * {@inheritdoc}
      */
-    public function cleanUpReservations($duration = 0)
+    public function cleanUpReservations($duration = 0, $seriesId = null)
     {
         return Reservation::cleanUpReservations($duration, $this->seriesId);
     }
