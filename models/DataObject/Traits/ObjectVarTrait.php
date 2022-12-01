@@ -27,7 +27,7 @@ trait ObjectVarTrait
     /**
      * returns object values without the dao
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function getObjectVars(): array
     {

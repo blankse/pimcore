@@ -27,7 +27,7 @@ class Folder extends Model\User\AbstractUser
     /**
      * @internal
      *
-     * @var array|null
+     * @var Role[]|null
      */
     protected ?array $children = null;
 
@@ -52,6 +52,9 @@ class Folder extends Model\User\AbstractUser
         return $this->hasChildren;
     }
 
+    /**
+     * @return Role[]
+     */
     public function getChildren(): array
     {
         if ($this->children === null) {
@@ -68,6 +71,11 @@ class Folder extends Model\User\AbstractUser
         return $this->children;
     }
 
+    /**
+     * @param Role[] $children
+     *
+     * @return $this
+     */
     public function setChildren(array $children): static
     {
         if (is_array($children)) {

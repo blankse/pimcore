@@ -22,19 +22,27 @@ use Pimcore\Model;
  * @internal
  *
  * @method \Pimcore\Model\User\Listing\AbstractListing\Dao getDao()
- * @method Model\User[] load()
- * @method Model\User|false current()
+ * @method Model\User\AbstractUser[] load()
+ * @method Model\User\AbstractUser|false current()
  * @method int getTotalCount()
  */
 abstract class AbstractListing extends Model\Listing\AbstractListing
 {
     protected string $type;
 
+    /**
+     * @return Model\User\AbstractUser[]
+     */
     public function getItems(): array
     {
         return $this->getData();
     }
 
+    /**
+     * @param Model\User\AbstractUser[] $items
+     *
+     * @return $this
+     */
     public function setItems(array $items): static
     {
         return $this->setData($items);

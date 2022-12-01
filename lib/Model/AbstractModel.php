@@ -165,14 +165,14 @@ abstract class AbstractModel implements ModelInterface
     }
 
     /**
+     * @param array<string, mixed>
+     *
      * @return $this
      */
     public function setValues(array $data = []): static
     {
-        if (is_array($data) && count($data) > 0) {
-            foreach ($data as $key => $value) {
-                $this->setValue($key, $value);
-            }
+        foreach ($data as $key => $value) {
+            $this->setValue($key, $value);
         }
 
         return $this;

@@ -21,7 +21,7 @@ use Pimcore\Model;
 /**
  * @internal
  *
- * @method \Pimcore\Model\Tool\Email\Blacklist\Dao getDao()
+ * @method Model\Tool\Email\Blacklist\Dao getDao()
  * @method void delete()
  * @method void save()
  */
@@ -45,7 +45,7 @@ class Blacklist extends Model\AbstractModel
         }
     }
 
-    public function setAddress(string $address)
+    public function setAddress(string $address): void
     {
         $this->address = $address;
     }
@@ -55,9 +55,9 @@ class Blacklist extends Model\AbstractModel
         return $this->address;
     }
 
-    public function setCreationDate(int $creationDate)
+    public function setCreationDate(int $creationDate): void
     {
-        $this->creationDate = (int) $creationDate;
+        $this->creationDate = $creationDate;
     }
 
     public function getCreationDate(): int
@@ -69,9 +69,9 @@ class Blacklist extends Model\AbstractModel
         return $this->creationDate;
     }
 
-    public function setModificationDate(int $modificationDate)
+    public function setModificationDate(int $modificationDate): void
     {
-        $this->modificationDate = (int) $modificationDate;
+        $this->modificationDate = $modificationDate;
     }
 
     public function getModificationDate(): int

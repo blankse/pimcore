@@ -36,8 +36,6 @@ class Log extends Model\AbstractModel
 
     /**
      * Id of the email document or null if no document was given
-     *
-     * @var int | null
      */
     protected ?int $documentId = null;
 
@@ -48,102 +46,77 @@ class Log extends Model\AbstractModel
 
     /**
      * Modification date as timestamp
-     *
-     * @var int
      */
     protected int $modificationDate;
 
     /**
      * The request URI from were the email was sent
-     *
-     * @var string
      */
     protected string $requestUri;
 
     /**
      * The "from" email address
-     *
-     * @var string
      */
     protected string $from;
 
     /**
      * Contains the reply to email addresses (multiple recipients are separated by a ",")
-     *
-     * @var ?string
      */
     protected ?string $replyTo = null;
 
     /**
      * The "to" recipients (multiple recipients are separated by a ",")
-     *
-     * @var string|null
      */
     protected ?string $to = null;
 
     /**
      * The carbon copy recipients (multiple recipients are separated by a ",")
-     *
-     * @var string|null
      */
     protected ?string $cc = null;
 
     /**
      * The blind carbon copy recipients (multiple recipients are separated by a ",")
-     *
-     * @var string|null
      */
     protected ?string $bcc = null;
 
     /**
      * Contains 1 if a html logfile exists and 0 if no html logfile exists
-     *
-     * @var int
      */
     protected int $emailLogExistsHtml;
 
     /**
      * Contains 1 if a text logfile exists and 0 if no text logfile exists
-     *
-     * @var int
      */
     protected int $emailLogExistsText;
 
     /**
      * Contains the timestamp when the email was sent
-     *
-     * @var int
      */
     protected int $sentDate;
 
     /**
      * Contains the rendered html content of the email
-     *
-     * @var string
      */
     protected string $bodyHtml = '';
 
     /**
      * Contains the rendered text content of the email
-     *
-     * @var string
      */
     protected string $bodyText = '';
 
     /**
      * Contains the rendered subject of the email
-     *
-     * @var string
      */
     protected string $subject;
 
     /**
      * Error log, when mail send resulted in failure - empty if successfully sent
-     *
-     * @var ?string
      */
     protected ?string $error = null;
 
+    /**
+     * @return $this
+     */
     public function setDocumentId(int $id): static
     {
         $this->documentId = $id;
@@ -151,6 +124,9 @@ class Log extends Model\AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setRequestUri(string $requestUri): static
     {
         $this->requestUri = $requestUri;
@@ -176,13 +152,19 @@ class Log extends Model\AbstractModel
         return $this->id;
     }
 
+    /**
+     * @return $this
+     */
     public function setId(int $id): static
     {
-        $this->id = (int)$id;
+        $this->id = $id;
 
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setSubject(string $subject): static
     {
         $this->subject = $subject;
@@ -204,10 +186,6 @@ class Log extends Model\AbstractModel
      * Returns the EmailLog entry by the given id
      *
      * @static
-     *
-     * @param int $id
-     *
-     * @return Log|null
      */
     public static function getById(int $id): ?Log
     {
@@ -226,14 +204,15 @@ class Log extends Model\AbstractModel
 
     /**
      * Returns the email document id
-     *
-     * @return int|null
      */
     public function getDocumentId(): ?int
     {
         return $this->documentId;
     }
 
+    /**
+     * @return $this
+     */
     public function setParams(string|array $params): static
     {
         $this->params = $params;
@@ -243,8 +222,6 @@ class Log extends Model\AbstractModel
 
     /**
      * Returns the dynamic parameter
-     *
-     * @return array
      */
     public function getParams(): array
     {
@@ -257,8 +234,6 @@ class Log extends Model\AbstractModel
 
     /**
      * Sets the modification date
-     *
-     * @param int $modificationDate
      *
      * @return $this
      */
@@ -295,8 +270,6 @@ class Log extends Model\AbstractModel
 
     /**
      * Returns the sent date and time as unix timestamp
-     *
-     * @return int
      */
     public function getSentDate(): int
     {
@@ -304,7 +277,9 @@ class Log extends Model\AbstractModel
     }
 
     /**
-     *  Checks if a html log file exits and sets $this->emailLogExistsHtml to 0 or 1
+     * Checks if a html log file exits and sets $this->emailLogExistsHtml to 0 or 1
+     *
+     * @return $this
      */
     public function setEmailLogExistsHtml(): static
     {
@@ -318,7 +293,7 @@ class Log extends Model\AbstractModel
     /**
      * Returns 1 if a html email log file exists and 0 if no html log file exists
      *
-     * @return int - 0 or 1
+     * @return int<0, 1>
      */
     public function getEmailLogExistsHtml(): int
     {
@@ -327,6 +302,8 @@ class Log extends Model\AbstractModel
 
     /**
      * Checks if a text log file exits and sets $this->emailLogExistsText to 0 or 1
+     *
+     * @return $this
      */
     public function setEmailLogExistsText(): static
     {
@@ -340,7 +317,7 @@ class Log extends Model\AbstractModel
     /**
      * Returns 1 if a text email log file exists and 0 if no text log file exists
      *
-     * @return int - 0 or 1
+     * @return int<0, 1>
      */
     public function getEmailLogExistsText(): int
     {
@@ -349,8 +326,6 @@ class Log extends Model\AbstractModel
 
     /**
      * Returns the filename of the html log
-     *
-     * @return string
      */
     public function getHtmlLogFilename(): string
     {
@@ -359,8 +334,6 @@ class Log extends Model\AbstractModel
 
     /**
      * Returns the filename of the text log
-     *
-     * @return string
      */
     public function getTextLogFilename(): string
     {
@@ -402,7 +375,7 @@ class Log extends Model\AbstractModel
     /**
      * Removes the log file entry from the db and removes the log files on the system
      */
-    public function delete()
+    public function delete(): void
     {
         $storage = Storage::get('email_log');
         $storage->delete($this->getHtmlLogFilename());
@@ -410,7 +383,7 @@ class Log extends Model\AbstractModel
         $this->getDao()->delete();
     }
 
-    public function save()
+    public function save(): void
     {
         $this->getDao()->save();
 
@@ -433,6 +406,9 @@ class Log extends Model\AbstractModel
         }
     }
 
+    /**
+     * @return $this
+     */
     public function setTo(?string $to): static
     {
         $this->to = $to;
@@ -442,14 +418,15 @@ class Log extends Model\AbstractModel
 
     /**
      * Returns the "to" recipients
-     *
-     * @return string|null
      */
     public function getTo(): ?string
     {
         return $this->to;
     }
 
+    /**
+     * @return $this
+     */
     public function setCc(?string $cc): static
     {
         $this->cc = $cc;
@@ -459,14 +436,15 @@ class Log extends Model\AbstractModel
 
     /**
      * Returns the carbon copy recipients
-     *
-     * @return string|null
      */
     public function getCc(): ?string
     {
         return $this->cc;
     }
 
+    /**
+     * @return $this
+     */
     public function setBcc(?string $bcc): static
     {
         $this->bcc = $bcc;
@@ -476,14 +454,15 @@ class Log extends Model\AbstractModel
 
     /**
      * Returns the blind carbon copy recipients
-     *
-     * @return string|null
      */
     public function getBcc(): ?string
     {
         return $this->bcc;
     }
 
+    /**
+     * @return $this
+     */
     public function setFrom(string $from): static
     {
         $this->from = $from;
@@ -493,14 +472,15 @@ class Log extends Model\AbstractModel
 
     /**
      * Returns the "from" email address
-     *
-     * @return string
      */
     public function getFrom(): string
     {
         return $this->from;
     }
 
+    /**
+     * @return $this
+     */
     public function setReplyTo(string $replyTo): static
     {
         $this->replyTo = $replyTo;
@@ -510,14 +490,15 @@ class Log extends Model\AbstractModel
 
     /**
      * Returns the "replyTo" email address
-     *
-     * @return ?string
      */
     public function getReplyTo(): ?string
     {
         return $this->replyTo;
     }
 
+    /**
+     * @return $this
+     */
     public function setBodyHtml(string $html): static
     {
         $this->bodyHtml = $html;
@@ -527,14 +508,15 @@ class Log extends Model\AbstractModel
 
     /**
      * returns the html content of the email
-     *
-     * @return string | null
      */
     public function getBodyHtml(): ?string
     {
         return $this->bodyHtml;
     }
 
+    /**
+     * @return $this
+     */
     public function setBodyText(string $text): static
     {
         $this->bodyText = $text;
@@ -544,8 +526,6 @@ class Log extends Model\AbstractModel
 
     /**
      * Returns the text version of the email
-     *
-     * @return string
      */
     public function getBodyText(): string
     {

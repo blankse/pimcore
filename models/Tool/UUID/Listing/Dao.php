@@ -28,7 +28,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * Loads a list of UUID for the specified parameters, returns an array of UUID elements
      *
-     * @return array
+     * @return UUID[]
      */
     public function load(): array
     {

@@ -49,7 +49,7 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    public function delete(string $id)
+    public function delete(string $id): void
     {
         $this->db->delete('tmp_store', ['id' => $id]);
     }
@@ -71,6 +71,9 @@ class Dao extends Model\Dao\AbstractDao
         return false;
     }
 
+    /**
+     * @return string[]
+     */
     public function getIdsByTag(string $tag): array
     {
         $items = $this->db->fetchFirstColumn('SELECT id FROM tmp_store WHERE tag = ?', [$tag]);

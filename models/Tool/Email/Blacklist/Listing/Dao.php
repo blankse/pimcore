@@ -20,14 +20,14 @@ use Pimcore\Model;
 /**
  * @internal
  *
- * @property \Pimcore\Model\Tool\Email\Blacklist\Listing $model
+ * @property Model\Tool\Email\Blacklist\Listing $model
  */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
     /**
      * Loads a list of static routes for the specicifies parameters, returns an array of Tool\Email\Blacklist elements
      *
-     * @return array
+     * @return Model\Tool\Email\Blacklist[]
      */
     public function load(): array
     {

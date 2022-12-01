@@ -39,13 +39,12 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param string $key
-     * @param array|null $languages
+     * @param string[]|null $languages
      *
      * @throws NotFoundResourceException
      * @throws \Doctrine\DBAL\Exception
      */
-    public function getByKey(string $key, array $languages = null)
+    public function getByKey(string $key, array $languages = null): void
     {
         if (is_array($languages)) {
             $sql = 'SELECT * FROM ' . $this->getDatabaseTableName() . ' WHERE `key` = :key
@@ -77,7 +76,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Save object to database
      */
-    public function save()
+    public function save(): void
     {
         //Create Domain table if doesn't exist
         $this->createOrUpdateTable();
@@ -119,7 +118,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Deletes object from database
      */
-    public function delete()
+    public function delete(): void
     {
         $this->db->delete($this->getDatabaseTableName(), [$this->db->quoteIdentifier('key') => $this->model->getKey()]);
     }
@@ -127,7 +126,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Returns a array containing all available languages
      *
-     * @return array
+     * @return string[]
      */
     public function getAvailableLanguages(): array
     {
@@ -144,7 +143,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Returns a array containing all available domains
      *
-     * @return array
+     * @return string[]
      */
     public function getAvailableDomains(): array
     {
@@ -160,10 +159,6 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * Returns boolean, if the domain table exists
-     *
-     * @param string $domain
-     *
-     * @return bool
      */
     public function isAValidDomain(string $domain): bool
     {
@@ -176,7 +171,7 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    public function createOrUpdateTable()
+    public function createOrUpdateTable(): void
     {
         $table = $this->getDatabaseTableName();
 

@@ -90,6 +90,9 @@ class Listing extends Model\Listing\AbstractListing
         return $this->getData();
     }
 
+    /**
+     * @param \Pimcore\Model\Translation[] $translations
+     */
     public function setTranslations(array $translations): Listing
     {
         return $this->setData($translations);
@@ -100,7 +103,7 @@ class Listing extends Model\Listing\AbstractListing
         return self::$cacheLimit;
     }
 
-    public static function setCacheLimit(int $cacheLimit)
+    public static function setCacheLimit(int $cacheLimit): void
     {
         self::$cacheLimit = $cacheLimit;
     }

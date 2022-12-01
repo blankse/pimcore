@@ -95,7 +95,7 @@ abstract class PimcoreLocationAwareConfigDao implements DaoInterface
      *
      * @throws \Exception
      */
-    protected function saveData(string $id, array $data)
+    protected function saveData(string $id, array $data): void
     {
         $dao = $this;
         $this->invalidateCache($id);

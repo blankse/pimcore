@@ -149,6 +149,9 @@ final class TmpStore extends Model\AbstractModel
         return null;
     }
 
+    /**
+     * @return string[]
+     */
     public static function getIdsByTag(string $tag): array
     {
         $instance = self::getInstance();
@@ -162,7 +165,7 @@ final class TmpStore extends Model\AbstractModel
         return $this->id;
     }
 
-    public function setId(string $id)
+    public function setId(string $id): void
     {
         $this->id = $id;
     }
@@ -172,7 +175,7 @@ final class TmpStore extends Model\AbstractModel
         return $this->tag;
     }
 
-    public function setTag(string $tag)
+    public function setTag(string $tag): void
     {
         $this->tag = $tag;
     }
@@ -192,7 +195,7 @@ final class TmpStore extends Model\AbstractModel
         return $this->date;
     }
 
-    public function setDate(int $date)
+    public function setDate(int $date): void
     {
         $this->date = $date;
     }
@@ -202,7 +205,7 @@ final class TmpStore extends Model\AbstractModel
         return $this->serialized;
     }
 
-    public function setSerialized(bool $serialized)
+    public function setSerialized(bool $serialized): void
     {
         $this->serialized = $serialized;
     }
@@ -212,7 +215,7 @@ final class TmpStore extends Model\AbstractModel
         return $this->expiryDate;
     }
 
-    public function setExpiryDate(int $expiryDate)
+    public function setExpiryDate(int $expiryDate): void
     {
         $this->expiryDate = $expiryDate;
     }

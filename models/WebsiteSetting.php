@@ -45,7 +45,7 @@ final class WebsiteSetting extends AbstractModel
     /**
      * this is a small per request cache to know which website setting is which is, this info is used in self::getByName()
      *
-     * @var array
+     * @var array<string, int>
      */
     protected static array $nameIdMappingCache = [];
 
@@ -239,7 +239,7 @@ final class WebsiteSetting extends AbstractModel
         return $this->language;
     }
 
-    public function setLanguage(string $language)
+    public function setLanguage(string $language): void
     {
         $this->language = $language;
     }
@@ -247,7 +247,7 @@ final class WebsiteSetting extends AbstractModel
     /**
      * @internal
      */
-    public function clearDependentCache()
+    public function clearDependentCache(): void
     {
         \Pimcore\Cache::clearTag('website_config');
     }

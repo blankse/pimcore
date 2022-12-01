@@ -67,6 +67,9 @@ class AbstractUser extends Model\AbstractModel
         return $user;
     }
 
+    /**
+     * @param array<string, mixed> $values
+     */
     public static function create(array $values = []): static
     {
         $user = new static();
@@ -177,7 +180,7 @@ class AbstractUser extends Model\AbstractModel
     /**
      * @throws \Exception
      */
-    public function delete()
+    public function delete(): void
     {
         if ($this->getId() < 1) {
             throw new \Exception('Deleting the system user is not allowed!');
@@ -231,6 +234,9 @@ class AbstractUser extends Model\AbstractModel
         }
     }
 
+    /**
+     * @return $this
+     */
     public function setType(string $type): static
     {
         $this->type = $type;
@@ -241,17 +247,13 @@ class AbstractUser extends Model\AbstractModel
     /**
      * @throws \Exception
      */
-    protected function update()
+    protected function update(): void
     {
         $this->getDao()->update();
     }
 
     /**
      * @internal
-     *
-     * @param AbstractUser $user
-     *
-     * @return bool
      */
     protected static function typeMatch(AbstractUser $user): bool
     {

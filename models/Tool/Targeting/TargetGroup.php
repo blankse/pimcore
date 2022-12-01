@@ -75,6 +75,9 @@ class TargetGroup extends Model\AbstractModel
         return false;
     }
 
+    /**
+     * @return $this
+     */
     public function setDescription(string $description): static
     {
         $this->description = $description;
@@ -87,6 +90,9 @@ class TargetGroup extends Model\AbstractModel
         return $this->description;
     }
 
+    /**
+     * @return $this
+     */
     public function setId(int $id): static
     {
         $this->id = (int)$id;
@@ -99,6 +105,9 @@ class TargetGroup extends Model\AbstractModel
         return $this->id;
     }
 
+    /**
+     * @return $this
+     */
     public function setName(string $name): static
     {
         $this->name = $name;
@@ -111,7 +120,7 @@ class TargetGroup extends Model\AbstractModel
         return $this->name;
     }
 
-    public function setThreshold(int $threshold)
+    public function setThreshold(int $threshold): void
     {
         $this->threshold = $threshold;
     }
@@ -121,9 +130,9 @@ class TargetGroup extends Model\AbstractModel
         return $this->threshold;
     }
 
-    public function setActive(bool $active)
+    public function setActive(bool $active): void
     {
-        $this->active = (bool)$active;
+        $this->active = $active;
     }
 
     public function getActive(): bool

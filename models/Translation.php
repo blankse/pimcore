@@ -175,9 +175,7 @@ final class Translation extends AbstractModel
     /**
      * @internal
      *
-     * @param string $domain
-     *
-     * @return array
+     * @return string[]
      */
     public static function getValidLanguages(string $domain = self::DOMAIN_DEFAULT): array
     {
@@ -188,7 +186,7 @@ final class Translation extends AbstractModel
         return Tool::getValidLanguages();
     }
 
-    public function addTranslation(string $language, string $text)
+    public function addTranslation(string $language, string $text): void
     {
         $this->translations[$language] = $text;
     }
@@ -206,23 +204,15 @@ final class Translation extends AbstractModel
     /**
      * @internal
      */
-    public static function clearDependentCache()
+    public static function clearDependentCache(): void
     {
         Cache::clearTags(['translator', 'translate']);
     }
 
     /**
-     * @param string $id
-     * @param string $domain
-     * @param bool $create
-     * @param bool $returnIdIfEmpty
-     * @param array|null $languages
-     *
-     * @return static|null
-     *
      * @throws \Exception
      */
-    public static function getByKey(string $id, string $domain = self::DOMAIN_DEFAULT, bool $create = false, bool $returnIdIfEmpty = false, array $languages = null): ?static
+    public static function getByKey(string $id, string $domain = self::DOMAIN_DEFAULT, bool $create = false, bool $returnIdIfEmpty = false, ?array $languages = null): ?static
     {
         $cacheKey = 'translation_' . $id . '_' . $domain;
         if (is_array($languages)) {
@@ -276,17 +266,12 @@ final class Translation extends AbstractModel
     }
 
     /**
-     * @param string $id
-     * @param string $domain
      * @param bool $create - creates an empty translation entry if the key doesn't exists
      * @param bool $returnIdIfEmpty - returns $id if no translation is available
-     * @param string|null $language
-     *
-     * @return string|null
      *
      * @throws \Exception
      */
-    public static function getByKeyLocalized(string $id, string $domain = self::DOMAIN_DEFAULT, bool $create = false, bool $returnIdIfEmpty = false, string $language = null): ?string
+    public static function getByKeyLocalized(string $id, string $domain = self::DOMAIN_DEFAULT, bool $create = false, bool $returnIdIfEmpty = false, ?string $language = null): ?string
     {
         $args = func_get_args();
         $domain = $args[1] ?? self::DOMAIN_DEFAULT;
@@ -333,7 +318,7 @@ final class Translation extends AbstractModel
         return $translation->getDao()->isAValidDomain($domain);
     }
 
-    public function save()
+    public function save(): void
     {
         $this->dispatchEvent(new TranslationEvent($this), TranslationEvents::PRE_SAVE);
 
@@ -344,7 +329,7 @@ final class Translation extends AbstractModel
         self::clearDependentCache();
     }
 
-    public function delete()
+    public function delete(): void
     {
         $this->dispatchEvent(new TranslationEvent($this), TranslationEvents::PRE_DELETE);
 
@@ -359,19 +344,16 @@ final class Translation extends AbstractModel
      * The CSV file has to have the same format as an Pimcore translation-export-file
      *
      * @param string $file - path to the csv file
-     * @param string $domain
-     * @param bool $replaceExistingTranslations
-     * @param array|null $languages
-     * @param array|null $dialect
+     * @param string[]|null $languages
+     * @param \stdClass|null $dialect
      *
-     * @return array
+     * @return list<array{lg: string, key: string, text: string, csv: string}>
      *
      * @throws \Exception
      *
-     *@internal
-     *
+     * @internal
      */
-    public static function importTranslationsFromFile(string $file, string $domain = self::DOMAIN_DEFAULT, bool $replaceExistingTranslations = true, array $languages = null, array $dialect = null): array
+    public static function importTranslationsFromFile(string $file, string $domain = self::DOMAIN_DEFAULT, bool $replaceExistingTranslations = true, ?array $languages = null, ?\stdClass $dialect = null): array
     {
         $delta = [];
 

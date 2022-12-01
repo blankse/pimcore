@@ -29,11 +29,12 @@ class Definition extends Model\AbstractModel
 
     protected ?string $category = null;
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function __construct(array $data = [])
     {
-        if (is_array($data) && !empty($data)) {
-            $this->setValues($data);
-        }
+        $this->setValues($data);
     }
 
     public function getKey(): ?string

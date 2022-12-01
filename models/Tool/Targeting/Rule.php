@@ -112,6 +112,9 @@ class Rule extends Model\AbstractModel
         }
     }
 
+    /**
+     * @return $this
+     */
     public function setDescription(string $description): static
     {
         $this->description = $description;
@@ -124,6 +127,9 @@ class Rule extends Model\AbstractModel
         return $this->description;
     }
 
+    /**
+     * @return $this
+     */
     public function setId(int $id): static
     {
         $this->id = (int) $id;
@@ -136,6 +142,9 @@ class Rule extends Model\AbstractModel
         return $this->id;
     }
 
+    /**
+     * @return $this
+     */
     public function setName(string $name): static
     {
         $this->name = $name;
@@ -148,6 +157,9 @@ class Rule extends Model\AbstractModel
         return $this->name;
     }
 
+    /**
+     * @return $this
+     */
     public function setActions(array $actions): static
     {
         if (!$actions) {
@@ -164,6 +176,9 @@ class Rule extends Model\AbstractModel
         return $this->actions;
     }
 
+    /**
+     * @return $this
+     */
     public function setConditions(array $conditions): static
     {
         if (!$conditions) {
@@ -180,7 +195,7 @@ class Rule extends Model\AbstractModel
         return $this->conditions;
     }
 
-    public function setScope(string $scope)
+    public function setScope(string $scope): void
     {
         if (!empty($scope)) {
             $this->scope = $scope;
@@ -192,9 +207,9 @@ class Rule extends Model\AbstractModel
         return $this->scope;
     }
 
-    public function setActive(bool $active)
+    public function setActive(bool $active): void
     {
-        $this->active = (bool) $active;
+        $this->active = $active;
     }
 
     public function getActive(): bool
@@ -207,7 +222,7 @@ class Rule extends Model\AbstractModel
         return $this->prio;
     }
 
-    public function setPrio(int $prio)
+    public function setPrio(int $prio): void
     {
         $this->prio = $prio;
     }

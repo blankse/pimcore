@@ -16,13 +16,18 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\User;
 
+use Pimcore\Model\User;
+
 /**
- * @method \Pimcore\Model\User\Dao getDao()
+ * @method Dao getDao()
  */
 class Folder extends UserRole\Folder
 {
     protected string $type = 'userfolder';
 
+    /**
+     * @return User[]
+     */
     public function getChildren(): array
     {
         if ($this->children === null) {

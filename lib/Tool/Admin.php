@@ -51,7 +51,7 @@ class Admin
      *
      * @static
      *
-     * @return array
+     * @return string[]
      */
     public static function getLanguages(): array
     {

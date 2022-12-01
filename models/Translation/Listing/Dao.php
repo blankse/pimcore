@@ -61,6 +61,9 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $amount;
     }
 
+    /**
+     * @return array<string, Model\Translation>
+     */
     public function getAllTranslations(): array
     {
         $queryBuilder = $this->getQueryBuilder(['*']);
@@ -97,6 +100,9 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $translations;
     }
 
+    /**
+     * @return list<array<string,mixed>>
+     */
     public function loadRaw(): array
     {
         $queryBuilder = $this->getQueryBuilder(['*']);
@@ -105,6 +111,9 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $translationsData;
     }
 
+    /**
+     * @return Model\Translation[]
+     */
     public function load(): array
     {
         //$allTranslations = $this->getAllTranslations();
@@ -138,7 +147,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return true;
     }
 
-    public function cleanup()
+    public function cleanup(): void
     {
         $keysToDelete = $this->db->fetchFirstColumn('SELECT `key` FROM ' . $this->getDatabaseTableName() . ' as tbl1 WHERE
                (SELECT count(*) FROM ' . $this->getDatabaseTableName() . " WHERE `key` = tbl1.`key` AND (`text` IS NULL OR `text` = ''))

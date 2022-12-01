@@ -19,7 +19,8 @@ namespace Pimcore\Model\User;
 use Pimcore\Model\User;
 
 /**
- * @method \Pimcore\Model\User\Listing\Dao getDao()
+ * @method User\Listing\Dao getDao()
+ * @method User[] getItems()
  * @method User[] load()
  */
 class Listing extends Listing\AbstractListing
@@ -29,7 +30,7 @@ class Listing extends Listing\AbstractListing
     /**
      * Alias for $this->getItems()
      *
-     * @return \Pimcore\Model\User[]
+     * @return User[]
      */
     public function getUsers(): array
     {

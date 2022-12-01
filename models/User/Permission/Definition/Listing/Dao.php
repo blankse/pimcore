@@ -27,7 +27,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * Loads a list of definitions for the specicified parameters, returns an array of User\Permission\Definition elements
      *
-     * @return array
+     * @return Model\User\Permission\Definition[]
      */
     public function load(): array
     {

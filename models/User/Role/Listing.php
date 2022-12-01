@@ -16,19 +16,20 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\User\Role;
 
-use Pimcore\Model;
+use Pimcore\Model\User;
 
 /**
- * @method \Pimcore\Model\User\Role\Listing\Dao getDao()
+ * @method Listing\Dao getDao()
+ * @method User\Role[] getItems()
  */
-class Listing extends Model\User\Listing\AbstractListing
+class Listing extends User\Listing\AbstractListing
 {
     protected string $type = 'role';
 
     /**
      * Alias for $this->getItems()
      *
-     * @return \Pimcore\Model\User\Role[]
+     * @return User\Role[]
      */
     public function getRoles(): array
     {
