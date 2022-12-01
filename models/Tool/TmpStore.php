@@ -185,7 +185,7 @@ final class TmpStore extends Model\AbstractModel
         return $this->data;
     }
 
-    public function setData(mixed $data)
+    public function setData(mixed $data): void
     {
         $this->data = $data;
     }

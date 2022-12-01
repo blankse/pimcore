@@ -34,14 +34,15 @@ final class Site extends AbstractModel
 
     protected ?int $id = null;
 
-    protected array $domains;
+    /**
+     * @var string[]
+     */
+    protected array $domains = [];
 
     /**
      * Contains the ID to the Root-Document
-     *
-     * @var int
      */
-    protected int $rootId;
+    protected ?int $rootId = null;
 
     protected ?Document\Page $rootDocument = null;
 
@@ -51,7 +52,10 @@ final class Site extends AbstractModel
 
     protected string $errorDocument = '';
 
-    protected array $localizedErrorDocuments;
+    /**
+     * @var string[]
+     */
+    protected array $localizedErrorDocuments = [];
 
     protected bool $redirectToMainDomain = false;
 
@@ -60,13 +64,9 @@ final class Site extends AbstractModel
     protected ?int $modificationDate = null;
 
     /**
-     * @param int $id
-     *
-     * @return Site|null
-     *
      * @throws \Exception
      */
-    public static function getById(int $id): Site|null
+    public static function getById(int $id): ?Site
     {
         $cacheKey = 'site_id_'. $id;
 
@@ -105,13 +105,9 @@ final class Site extends AbstractModel
     }
 
     /**
-     * @param string $domain
-     *
-     * @return Site|null
-     *
      * @throws \Exception
      */
-    public static function getByDomain(string $domain): Site|null
+    public static function getByDomain(string $domain): ?Site
     {
         // cached because this is called in the route
         $cacheKey = 'site_domain_'. md5($domain);
@@ -139,13 +135,9 @@ final class Site extends AbstractModel
     }
 
     /**
-     * @param mixed $mixed
-     *
-     * @return Site|null
-     *
      * @throws \Exception
      */
-    public static function getBy(mixed $mixed): Site|null
+    public static function getBy(mixed $mixed): ?Site
     {
         $site = null;
 
@@ -160,6 +152,9 @@ final class Site extends AbstractModel
         return $site;
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public static function create(array $data): Site
     {
         $site = new self();
@@ -171,8 +166,6 @@ final class Site extends AbstractModel
 
     /**
      * returns true if the current process/request is inside a site
-     *
-     * @return bool
      */
     public static function isSiteRequest(): bool
     {
@@ -184,8 +177,6 @@ final class Site extends AbstractModel
     }
 
     /**
-     * @return Site
-     *
      * @throws \Exception
      */
     public static function getCurrentSite(): Site
@@ -199,8 +190,6 @@ final class Site extends AbstractModel
 
     /**
      * Register the current site
-     *
-     * @param Site $site
      */
     public static function setCurrentSite(Site $site): void
     {
@@ -212,12 +201,15 @@ final class Site extends AbstractModel
         return $this->id;
     }
 
+    /**
+     * @return string[]
+     */
     public function getDomains(): array
     {
         return $this->domains;
     }
 
-    public function getRootId(): int
+    public function getRootId(): ?int
     {
         return $this->rootId;
     }
@@ -238,9 +230,11 @@ final class Site extends AbstractModel
     }
 
     /**
+     * @param string|string[] $domains
+     *
      * @return $this
      */
-    public function setDomains(mixed $domains): static
+    public function setDomains(string|array $domains): static
     {
         if (is_string($domains)) {
             $domains = \Pimcore\Tool\Serialize::unserialize($domains);
@@ -303,9 +297,11 @@ final class Site extends AbstractModel
     }
 
     /**
+     * @param string|string[] $localizedErrorDocuments
+     *
      * @return $this
      */
-    public function setLocalizedErrorDocuments(mixed $localizedErrorDocuments): static
+    public function setLocalizedErrorDocuments(string|array $localizedErrorDocuments): static
     {
         if (is_string($localizedErrorDocuments)) {
             $localizedErrorDocuments = \Pimcore\Tool\Serialize::unserialize($localizedErrorDocuments);
@@ -315,6 +311,9 @@ final class Site extends AbstractModel
         return $this;
     }
 
+    /**
+     * @return string[]
+     */
     public function getLocalizedErrorDocuments(): array
     {
         return $this->localizedErrorDocuments;

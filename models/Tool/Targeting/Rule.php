@@ -85,7 +85,7 @@ class Rule extends Model\AbstractModel
     {
         try {
             $target = new self();
-            $target->getDao()->getById((int)$id);
+            $target->getDao()->getById($id);
 
             return $target;
         } catch (Model\Exception\NotFoundException $e) {
@@ -132,7 +132,7 @@ class Rule extends Model\AbstractModel
      */
     public function setId(int $id): static
     {
-        $this->id = (int) $id;
+        $this->id = $id;
 
         return $this;
     }
@@ -162,10 +162,6 @@ class Rule extends Model\AbstractModel
      */
     public function setActions(array $actions): static
     {
-        if (!$actions) {
-            $actions = [];
-        }
-
         $this->actions = $actions;
 
         return $this;
@@ -181,10 +177,6 @@ class Rule extends Model\AbstractModel
      */
     public function setConditions(array $conditions): static
     {
-        if (!$conditions) {
-            $conditions = [];
-        }
-
         $this->conditions = $conditions;
 
         return $this;

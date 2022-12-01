@@ -24,6 +24,9 @@ use Pimcore\Model\Tool\SettingsStore\Dao;
  */
 final class SettingsStore extends Model\AbstractModel
 {
+    /**
+     * @var string[]
+     */
     protected static array $allowedTypes = ['bool', 'int', 'float', 'string'];
 
     /**

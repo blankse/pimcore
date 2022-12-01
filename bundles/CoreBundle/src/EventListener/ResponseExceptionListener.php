@@ -179,7 +179,7 @@ class ResponseExceptionListener implements EventSubscriberInterface
 
         if (Site::isSiteRequest()) {
             $site = Site::getCurrentSite();
-            $localizedErrorDocumentsPaths = $site->getLocalizedErrorDocuments() ?: [];
+            $localizedErrorDocumentsPaths = $site->getLocalizedErrorDocuments();
             $defaultErrorDocumentPath = $site->getErrorDocument();
         } else {
             $localizedErrorDocumentsPaths = $this->config['documents']['error_pages']['localized'] ?? [];

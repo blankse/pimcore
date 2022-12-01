@@ -22,7 +22,7 @@ use Pimcore\Model\User\Role;
 use Pimcore\Tool;
 
 /**
- * @method \Pimcore\Model\User\Dao getDao()
+ * @method User\Dao getDao()
  */
 final class User extends User\UserRole
 {
@@ -45,7 +45,7 @@ final class User extends User\UserRole
     protected bool $active = true;
 
     /**
-     * @var string[]
+     * @var int[]
      */
     protected array $roles = [];
 
@@ -61,23 +61,38 @@ final class User extends User\UserRole
 
     protected ?string $activePerspective = null;
 
+    /**
+     * @var string[]|null
+     */
     protected ?array $mergedPerspectives = null;
 
+    /**
+     * @var string[]|null
+     */
     protected ?array $mergedWebsiteTranslationLanguagesEdit = null;
 
+    /**
+     * @var string[]|null
+     */
     protected ?array $mergedWebsiteTranslationLanguagesView = null;
 
     protected int $lastLogin;
 
     protected ?string $keyBindings = null;
 
-    protected ?array $twoFactorAuthentication = [];
+    /**
+     * @var array<string, mixed>|null
+     */
+    protected ?array $twoFactorAuthentication = null;
 
     public function getPassword(): ?string
     {
         return $this->password;
     }
 
+    /**
+     * @return $this
+     */
     public function setPassword(?string $password): static
     {
         if (strlen((string) $password) > 4) {
@@ -97,6 +112,9 @@ final class User extends User\UserRole
         return $this->getName();
     }
 
+    /**
+     * @return $this
+     */
     public function setUsername(?string $username): static
     {
         $this->setName($username);
@@ -227,7 +245,7 @@ final class User extends User\UserRole
                 // check roles
                 foreach ($this->getRoles() as $roleId) {
                     /** @var Role $role */
-                    $role = User\Role::getById((int)$roleId);
+                    $role = User\Role::getById($roleId);
                     if ($role->getPermission($key)) {
                         return true;
                     }
@@ -279,16 +297,16 @@ final class User extends User\UserRole
     }
 
     /**
-     * @param string[]|string $roles
+     * @param int[]|string $roles
      *
      * @return $this
      */
     public function setRoles(array|string $roles): static
     {
         if (is_string($roles) && $roles !== '') {
-            $this->roles = explode(',', $roles);
+            $this->roles = array_map('intval', explode(',', $roles));
         } elseif (is_array($roles)) {
-            $this->roles = $roles;
+            $this->roles = array_map('intval', $roles);
         } else {
             $this->roles = [];
         }
@@ -296,12 +314,11 @@ final class User extends User\UserRole
         return $this;
     }
 
+    /**
+     * @return int[]
+     */
     public function getRoles(): array
     {
-        if (empty($this->roles)) {
-            return [];
-        }
-
         return $this->roles;
     }
 
@@ -408,7 +425,7 @@ final class User extends User\UserRole
      *
      * @return resource
      */
-    public function getImage(int $width = null, int $height = null)
+    public function getImage(?int $width = null, ?int $height = null)
     {
         if (!$width) {
             $width = 46;
@@ -438,6 +455,9 @@ final class User extends User\UserRole
         return fopen($this->getFallbackImage(), 'rb');
     }
 
+    /**
+     * @return string[]
+     */
     public function getContentLanguages(): array
     {
         if (strlen($this->contentLanguages)) {
@@ -447,7 +467,10 @@ final class User extends User\UserRole
         return [];
     }
 
-    public function setContentLanguages(array|string|null $contentLanguages)
+    /**
+     * @param string[]|string|null $contentLanguages
+     */
+    public function setContentLanguages(array|string|null $contentLanguages): void
     {
         if (is_array($contentLanguages)) {
             $contentLanguages = implode(',', $contentLanguages);
@@ -464,7 +487,7 @@ final class User extends User\UserRole
         return $this->activePerspective;
     }
 
-    public function setActivePerspective(?string $activePerspective)
+    public function setActivePerspective(?string $activePerspective): void
     {
         $this->activePerspective = $activePerspective;
     }
@@ -500,8 +523,6 @@ final class User extends User\UserRole
      * Returns the first perspective name
      *
      * @internal
-     *
-     * @return string
      */
     public function getFirstAllowedPerspective(): string
     {
@@ -519,7 +540,7 @@ final class User extends User\UserRole
     /**
      * Returns array of website translation languages for editing related to user and all related roles
      *
-     * @return array
+     * @return string[]
      */
     private function getMergedWebsiteTranslationLanguagesEdit(): array
     {
@@ -542,7 +563,7 @@ final class User extends User\UserRole
      *
      * @internal
      *
-     * @return array|null
+     * @return string[]|null
      */
     public function getAllowedLanguagesForEditingWebsiteTranslations(): ?array
     {
@@ -560,7 +581,7 @@ final class User extends User\UserRole
     /**
      * Returns array of website translation languages for viewing related to user and all related roles
      *
-     * @return array
+     * @return string[]
      */
     private function getMergedWebsiteTranslationLanguagesView(): array
     {
@@ -583,7 +604,7 @@ final class User extends User\UserRole
      *
      * @internal
      *
-     * @return array|null
+     * @return string[]|null
      */
     public function getAllowedLanguagesForViewingWebsiteTranslations(): ?array
     {
@@ -597,7 +618,7 @@ final class User extends User\UserRole
 
     public function getLastLogin(): int
     {
-        return (int)$this->lastLogin;
+        return $this->lastLogin;
     }
 
     /**
@@ -605,7 +626,7 @@ final class User extends User\UserRole
      */
     public function setLastLogin(int $lastLogin): static
     {
-        $this->lastLogin = (int)$lastLogin;
+        $this->lastLogin = $lastLogin;
 
         return $this;
     }
@@ -826,7 +847,7 @@ final class User extends User\UserRole
 
     public function getKeyBindings(): string
     {
-        return $this->keyBindings ? $this->keyBindings : self::getDefaultKeyBindings();
+        return $this->keyBindings ?: self::getDefaultKeyBindings();
     }
 
     public function setKeyBindings(string $keyBindings): void
@@ -834,14 +855,9 @@ final class User extends User\UserRole
         $this->keyBindings = $keyBindings;
     }
 
-    /**
-     * @param string|null $key
-     *
-     * @return mixed
-     */
     public function getTwoFactorAuthentication(string $key = null): mixed
     {
-        if (!is_array($this->twoFactorAuthentication) || empty($this->twoFactorAuthentication)) {
+        if ($this->twoFactorAuthentication === null) {
             // set defaults if no data is present
             $this->twoFactorAuthentication = [
                 'required' => false,
@@ -852,21 +868,16 @@ final class User extends User\UserRole
         }
 
         if ($key) {
-            if (isset($this->twoFactorAuthentication[$key])) {
-                return $this->twoFactorAuthentication[$key];
-            } else {
-                return null;
-            }
-        } else {
-            return $this->twoFactorAuthentication;
+            return $this->twoFactorAuthentication[$key] ?? null;
         }
+
+        return $this->twoFactorAuthentication;
     }
 
     /**
      * You can either pass an array for setting the entire 2fa settings, or a key and a value as the second argument
      *
-     * @param array|string $key
-     * @param mixed $value
+     * @param array<string, mixed>|string $key
      */
     public function setTwoFactorAuthentication(array|string $key, mixed $value = null): void
     {
@@ -875,7 +886,7 @@ final class User extends User\UserRole
         } elseif (is_array($key)) {
             $this->twoFactorAuthentication = $key;
         } else {
-            if (!is_array($this->twoFactorAuthentication)) {
+            if ($this->twoFactorAuthentication === null) {
                 // load defaults
                 $this->getTwoFactorAuthentication();
             }
@@ -891,8 +902,6 @@ final class User extends User\UserRole
 
     /**
      * @internal
-     *
-     * @return string
      */
     protected function getFallbackImage(): string
     {

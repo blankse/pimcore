@@ -230,9 +230,6 @@ class CustomReportController extends ReportsControllerBase
             throw $this->createNotFoundException();
         }
         $columnConfiguration = $report->getColumnConfiguration();
-        if (!is_array($columnConfiguration)) {
-            $columnConfiguration = [];
-        }
 
         $configuration = json_decode($request->get('configuration'));
         $configuration = $configuration[0] ?? null;

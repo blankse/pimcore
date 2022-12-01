@@ -21,7 +21,7 @@ use Pimcore\Model;
 /**
  * @internal
  *
- * @method \Pimcore\Model\Tool\Email\Log\Listing\Dao getDao()
+ * @method Model\Tool\Email\Log\Listing\Dao getDao()
  * @method Model\Tool\Email\Log[] load()
  * @method Model\Tool\Email\Log|false current()
  * @method int getTotalCount()
@@ -39,7 +39,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * Sets EmailLog entries
      *
-     * @param array $emailLogs
+     * @param Model\Tool\Email\Log[] $emailLogs
      *
      * @return $this
      */

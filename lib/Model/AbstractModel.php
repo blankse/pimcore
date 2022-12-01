@@ -33,7 +33,7 @@ abstract class AbstractModel implements ModelInterface
     use ObjectVarTrait;
 
     /**
-     * @var \Pimcore\Model\Dao\AbstractDao|null
+     * @var AbstractDao|null
      */
     protected $dao;
 
@@ -165,7 +165,7 @@ abstract class AbstractModel implements ModelInterface
     }
 
     /**
-     * @param array<string, mixed>
+     * @param array<string, mixed> $data
      *
      * @return $this
      */
@@ -198,7 +198,7 @@ abstract class AbstractModel implements ModelInterface
     }
 
     /**
-     * @return array
+     * @return string[]
      */
     public function __sleep()
     {
@@ -248,7 +248,7 @@ abstract class AbstractModel implements ModelInterface
     }
 
     /**
-     * @return array
+     * @return array<string, mixed>
      */
     public function __debugInfo()
     {
@@ -266,7 +266,7 @@ abstract class AbstractModel implements ModelInterface
     /**
      * @internal
      *
-     * @param array $data
+     * @param array<string, mixed> $data
      *
      * @throws \Exception
      */

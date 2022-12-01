@@ -20,10 +20,13 @@ use Pimcore\Model;
 /**
  * @internal
  *
- * @property \Pimcore\Model\Staticroute\Listing $model
+ * @property Model\Staticroute\Listing $model
  */
 class Dao extends Model\Staticroute\Dao
 {
+    /**
+     * @return Model\Staticroute[]
+     */
     public function loadList(): array
     {
         $staticRoutes = [];

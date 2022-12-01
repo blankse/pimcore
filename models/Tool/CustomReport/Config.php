@@ -99,7 +99,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
     /**
      * @param Model\User|null $user
      *
-     * @return array
+     * @return array<int, array{id: string, text: string, cls: string, writeable: bool}>
      */
     public static function getReportsList(Model\User $user = null): array
     {
@@ -239,7 +239,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
 
     public function getDataSourceConfig(): ?\stdClass
     {
-        if (is_array($this->dataSourceConfig) && isset($this->dataSourceConfig[0])) {
+        if (isset($this->dataSourceConfig[0])) {
             $dataSourceConfig = new \stdClass();
             $dataSourceConfigArray = $this->dataSourceConfig[0];
 

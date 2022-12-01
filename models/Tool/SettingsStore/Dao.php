@@ -71,6 +71,9 @@ class Dao extends Model\Dao\AbstractDao
         return false;
     }
 
+    /**
+     * @return string[]
+     */
     public function getIdsByScope(string $scope): array
     {
         return $this->db->fetchFirstColumn('SELECT id FROM ' . self::TABLE_NAME . ' WHERE scope = ?', [$scope]);

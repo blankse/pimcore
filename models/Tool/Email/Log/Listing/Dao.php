@@ -20,14 +20,14 @@ use Pimcore\Model;
 /**
  * @internal
  *
- * @property \Pimcore\Model\Tool\Email\Log\Listing $model
+ * @property Model\Tool\Email\Log\Listing $model
  */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
     /**
      * Loads a list of Email_Log for the specified parameters, returns an array of Email_Log elements
      *
-     * @return array
+     * @return Model\Tool\Email\Log[]
      */
     public function load(): array
     {
@@ -45,7 +45,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * Returns the db entries from email_log by the specified parameters
      *
-     * @return array
+     * @return list<array<string,mixed>>
      */
     public function getDataArray(): array
     {
