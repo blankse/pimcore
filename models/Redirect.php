@@ -48,7 +48,7 @@ final class Redirect extends AbstractModel
 
     protected ?int $id = null;
 
-    protected string $type;
+    protected ?string $type = null;
 
     protected ?string $source = null;
 
@@ -152,9 +152,9 @@ final class Redirect extends AbstractModel
     /**
      * enum('entire_uri','path_query','path','auto_create')
      *
-     * @return string
+     * @return string|null
      */
-    public function getType(): string
+    public function getType(): ?string
     {
         return $this->type;
     }
@@ -164,7 +164,7 @@ final class Redirect extends AbstractModel
      *
      * @param string $type
      */
-    public function setType(string $type)
+    public function setType(string $type): void
     {
         if (!empty($type) && !in_array($type, self::TYPES)) {
             throw new \InvalidArgumentException(sprintf('Invalid type "%s"', $type));
@@ -173,6 +173,9 @@ final class Redirect extends AbstractModel
         $this->type = $type;
     }
 
+    /**
+     * @return $this
+     */
     public function setSource(string $source): static
     {
         $this->source = $source;
@@ -180,6 +183,9 @@ final class Redirect extends AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setTarget(string $target): static
     {
         $this->target = $target;
@@ -187,6 +193,9 @@ final class Redirect extends AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setPriority(int $priority): static
     {
         if ($priority) {
@@ -201,6 +210,9 @@ final class Redirect extends AbstractModel
         return $this->priority;
     }
 
+    /**
+     * @return $this
+     */
     public function setStatusCode(int $statusCode): static
     {
         if ($statusCode) {
@@ -225,7 +237,7 @@ final class Redirect extends AbstractModel
         return 'HTTP/1.1 ' . $statusCode . ' ' . $this->getStatusCodes()[$statusCode];
     }
 
-    public function clearDependentCache()
+    public function clearDependentCache(): void
     {
         // this is mostly called in Redirect\Dao not here
         try {
@@ -235,6 +247,9 @@ final class Redirect extends AbstractModel
         }
     }
 
+    /**
+     * @return $this
+     */
     public function setExpiry(int|string|null $expiry): static
     {
         if (is_string($expiry) && !is_numeric($expiry)) {
@@ -260,9 +275,12 @@ final class Redirect extends AbstractModel
         return (bool)$this->regex;
     }
 
+    /**
+     * @return $this
+     */
     public function setRegex(?bool $regex): static
     {
-        $this->regex = $regex ? (bool) $regex : null;
+        $this->regex = $regex;
 
         return $this;
     }
@@ -274,15 +292,18 @@ final class Redirect extends AbstractModel
 
     public function setActive(bool $active): static
     {
-        $this->active = (bool) $active;
+        $this->active = $active;
 
         return $this;
     }
 
-    public function setSourceSite(int $sourceSite): static
+    /**
+     * @return $this
+     */
+    public function setSourceSite(?int $sourceSite): static
     {
         if ($sourceSite) {
-            $this->sourceSite = (int) $sourceSite;
+            $this->sourceSite = $sourceSite;
         } else {
             $this->sourceSite = null;
         }
@@ -295,10 +316,13 @@ final class Redirect extends AbstractModel
         return $this->sourceSite;
     }
 
-    public function setTargetSite(int $targetSite): static
+    /**
+     * @return $this
+     */
+    public function setTargetSite(?int $targetSite): static
     {
         if ($targetSite) {
-            $this->targetSite = (int) $targetSite;
+            $this->targetSite = $targetSite;
         } else {
             $this->targetSite = null;
         }
@@ -311,9 +335,12 @@ final class Redirect extends AbstractModel
         return $this->targetSite;
     }
 
+    /**
+     * @return $this
+     */
     public function setPassThroughParameters(bool $passThroughParameters): static
     {
-        $this->passThroughParameters = (bool) $passThroughParameters;
+        $this->passThroughParameters = $passThroughParameters;
 
         return $this;
     }
@@ -323,9 +350,12 @@ final class Redirect extends AbstractModel
         return $this->passThroughParameters;
     }
 
+    /**
+     * @return $this
+     */
     public function setModificationDate(int $modificationDate): static
     {
-        $this->modificationDate = (int) $modificationDate;
+        $this->modificationDate = $modificationDate;
 
         return $this;
     }
@@ -335,9 +365,12 @@ final class Redirect extends AbstractModel
         return $this->modificationDate;
     }
 
+    /**
+     * @return $this
+     */
     public function setCreationDate(int $creationDate): static
     {
-        $this->creationDate = (int) $creationDate;
+        $this->creationDate = $creationDate;
 
         return $this;
     }
@@ -352,7 +385,7 @@ final class Redirect extends AbstractModel
         return $this->userOwner;
     }
 
-    public function setUserOwner(?int $userOwner)
+    public function setUserOwner(?int $userOwner): void
     {
         $this->userOwner = $userOwner;
     }
@@ -362,12 +395,12 @@ final class Redirect extends AbstractModel
         return $this->userModification;
     }
 
-    public function setUserModification(int $userModification)
+    public function setUserModification(int $userModification): void
     {
         $this->userModification = $userModification;
     }
 
-    public function save()
+    public function save(): void
     {
         $this->dispatchEvent(new RedirectEvent($this), RedirectEvents::PRE_SAVE);
         $this->getDao()->save();
@@ -375,7 +408,7 @@ final class Redirect extends AbstractModel
         $this->clearDependentCache();
     }
 
-    public function delete()
+    public function delete(): void
     {
         $this->dispatchEvent(new RedirectEvent($this), RedirectEvents::PRE_DELETE);
         $this->getDao()->delete();

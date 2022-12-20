@@ -34,6 +34,9 @@ class Listing extends AbstractModel implements CallableFilterListingInterface, C
     use FilterListingTrait;
     use OrderListingTrait;
 
+    /**
+     * @var \Pimcore\Model\Property\Predefined[]|null
+     */
     protected ?array $properties = null;
 
     /**

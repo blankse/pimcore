@@ -21,20 +21,20 @@ use Pimcore\Model;
 /**
  * @internal
  *
- * @method \Pimcore\Model\Schedule\Task\Dao getDao()
+ * @method Model\Schedule\Task\Dao getDao()
  * @method void save()
  */
 class Task extends Model\AbstractModel
 {
     protected ?int $id = null;
 
-    protected int $cid;
+    protected ?int $cid = null;
 
-    protected string $ctype;
+    protected ?string $ctype = null;
 
-    protected int $date;
+    protected ?int $date = null;
 
-    protected string $action;
+    protected ?string $action = null;
 
     protected ?int $version = null;
 
@@ -64,6 +64,9 @@ class Task extends Model\AbstractModel
         return $task;
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public static function create(array $data): Task
     {
         $task = new self();
@@ -73,6 +76,9 @@ class Task extends Model\AbstractModel
         return $task;
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function __construct(array $data = [])
     {
         $this->setValues($data);
@@ -83,22 +89,22 @@ class Task extends Model\AbstractModel
         return $this->id;
     }
 
-    public function getCid(): int
+    public function getCid(): ?int
     {
         return $this->cid;
     }
 
-    public function getCtype(): string
+    public function getCtype(): ?string
     {
         return $this->ctype;
     }
 
-    public function getDate(): int
+    public function getDate(): ?int
     {
         return $this->date;
     }
 
-    public function getAction(): string
+    public function getAction(): ?string
     {
         return $this->action;
     }
@@ -108,20 +114,29 @@ class Task extends Model\AbstractModel
         return $this->version;
     }
 
+    /**
+     * @return $this
+     */
     public function setId(int $id): static
     {
-        $this->id = (int) $id;
+        $this->id = $id;
 
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setCid(int $cid): static
     {
-        $this->cid = (int) $cid;
+        $this->cid = $cid;
 
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setCtype(string $ctype): static
     {
         $this->ctype = $ctype;
@@ -129,13 +144,19 @@ class Task extends Model\AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setDate(int $date): static
     {
-        $this->date = (int) $date;
+        $this->date = $date;
 
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setAction(string $action): static
     {
         $this->action = $action;
@@ -143,6 +164,9 @@ class Task extends Model\AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setVersion(?int $version): static
     {
         $this->version = $version;
@@ -155,12 +179,12 @@ class Task extends Model\AbstractModel
         return $this->active;
     }
 
+    /**
+     * @return $this
+     */
     public function setActive(bool $active): static
     {
-        if (empty($active)) {
-            $active = false;
-        }
-        $this->active = (bool) $active;
+        $this->active = $active;
 
         return $this;
     }

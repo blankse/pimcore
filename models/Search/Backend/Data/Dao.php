@@ -18,13 +18,14 @@ namespace Pimcore\Model\Search\Backend\Data;
 use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Model\Dao\AbstractDao;
 
 /**
  * @internal
  *
- * @property \Pimcore\Model\Search\Backend\Data $model
+ * @property Model\Search\Backend\Data $model
  */
-class Dao extends \Pimcore\Model\Dao\AbstractDao
+class Dao extends AbstractDao
 {
     public function getForElement(Model\Element\ElementInterface $element): void
     {
@@ -49,7 +50,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
         }
     }
 
-    public function save()
+    public function save(): void
     {
         $oldFullPath = $this->db->fetchOne('SELECT fullpath FROM search_backend_data WHERE id = :id and maintype = :type FOR UPDATE', [
             'id' => $this->model->getId()->getId(),
@@ -88,7 +89,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
     /**
      * Deletes from database
      */
-    public function delete()
+    public function delete(): void
     {
         if ($this->model->getId() instanceof Model\Search\Backend\Data\Id) {
             $this->db->delete('search_backend_data', [
@@ -100,19 +101,19 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
         }
     }
 
-    public function getMinWordLengthForFulltextIndex()
+    public function getMinWordLengthForFulltextIndex(): int
     {
         try {
-            return $this->db->fetchOne('SELECT @@innodb_ft_min_token_size');
+            return (int) $this->db->fetchOne('SELECT @@innodb_ft_min_token_size');
         } catch (\Exception $e) {
             return 3;
         }
     }
 
-    public function getMaxWordLengthForFulltextIndex()
+    public function getMaxWordLengthForFulltextIndex(): int
     {
         try {
-            return $this->db->fetchOne('SELECT @@innodb_ft_max_token_size');
+            return (int) $this->db->fetchOne('SELECT @@innodb_ft_max_token_size');
         } catch (\Exception $e) {
             return 84;
         }

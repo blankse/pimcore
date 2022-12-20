@@ -17,19 +17,20 @@ namespace Pimcore\Model\Search\Backend\Data\Listing;
 
 use Pimcore\Logger;
 use Pimcore\Model\Element\Service;
+use Pimcore\Model\Listing\Dao\AbstractDao;
 use Pimcore\Model\Search;
 
 /**
  * @internal
  *
- * @property \Pimcore\Model\Search\Backend\Data\Listing $model
+ * @property Search\Backend\Data\Listing $model
  */
-class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
+class Dao extends AbstractDao
 {
     /**
      * Loads a list of entries for the specicifies parameters, returns an array of Search\Backend\Data
      *
-     * @return array
+     * @return Search\Backend\Data[]
      */
     public function load(): array
     {
@@ -69,13 +70,13 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
         return (int)$this->db->fetchOne('SELECT COUNT(*) FROM search_backend_data' . $this->getCondition() . $this->getGroupBy(), $this->model->getConditionVariables());
     }
 
-    public function getCount(): int|string
+    public function getCount(): int
     {
         if (count($this->model->getEntries()) > 0) {
             return count($this->model->getEntries());
         }
 
-        $amount = $this->db->fetchOne('SELECT COUNT(*) as amount FROM search_backend_data '  . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $amount = (int) $this->db->fetchOne('SELECT COUNT(*) as amount FROM search_backend_data '  . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         return $amount;
     }
