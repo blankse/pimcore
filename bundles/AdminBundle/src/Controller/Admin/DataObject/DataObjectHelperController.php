@@ -648,7 +648,7 @@ class DataObjectHelperController extends AdminController
      * @param int $objectId
      * @param array|null $context
      */
-    protected function appendBrickFields(DataObject\ClassDefinition\Data $field, array $brickFields, array &$availableFields, string $gridType, int &$count, string $brickType, DataObject\ClassDefinition $class, int $objectId, array $context = null)
+    protected function appendBrickFields(DataObject\ClassDefinition\Data $field, array $brickFields, array &$availableFields, string $gridType, int &$count, string $brickType, DataObject\ClassDefinition $class, int $objectId, array $context = null): void
     {
         if (!empty($brickFields)) {
             foreach ($brickFields as $bf) {
@@ -978,7 +978,7 @@ class DataObjectHelperController extends AdminController
      *
      * @throws \Exception
      */
-    protected function updateGridConfigShares(?GridConfig $gridConfig, array $metadata)
+    protected function updateGridConfigShares(?GridConfig $gridConfig, array $metadata): void
     {
         $user = $this->getAdminUser();
         if (!$gridConfig || !$user->isAllowed('share_configurations')) {
@@ -1020,7 +1020,7 @@ class DataObjectHelperController extends AdminController
      *
      * @throws \Exception
      */
-    protected function updateGridConfigFavourites(?GridConfig $gridConfig, array $metadata, int $objectId)
+    protected function updateGridConfigFavourites(?GridConfig $gridConfig, array $metadata, int $objectId): void
     {
         $currentUser = $this->getAdminUser();
 
@@ -1228,36 +1228,6 @@ class DataObjectHelperController extends AdminController
         return $response;
     }
 
-    private function getDataPreview($originalFile, $dialect): array
-    {
-        $count = 0;
-        $data = [];
-        if (($handle = fopen($originalFile, 'r')) !== false) {
-            while (($rowData = fgetcsv($handle, 0, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar)) !== false) {
-                $tmpData = [];
-
-                foreach ($rowData as $key => $value) {
-                    $tmpData['field_' . $key] = $value;
-                }
-
-                $tmpData['rowId'] = $count + 1;
-                $data[] = $tmpData;
-
-                $count++;
-
-                /**
-                 * Reached the number or rows for the preview
-                 */
-                if ($count > 18) {
-                    break;
-                }
-            }
-            fclose($handle);
-        }
-
-        return $data;
-    }
-
     protected function extractLanguage(Request $request): string
     {
         $requestedLanguage = $request->get('language');
@@ -1420,9 +1390,9 @@ class DataObjectHelperController extends AdminController
         return $this->adminJson(['success' => true]);
     }
 
-    public function encodeFunc($value): string
+    public function encodeFunc(string $value): string
     {
-        $value = str_replace('"', '""', (string) $value);
+        $value = str_replace('"', '""', $value);
         //force wrap value in quotes and return
         return '"' . $value . '"';
     }
@@ -1816,7 +1786,7 @@ class DataObjectHelperController extends AdminController
      * @param bool $firstOne
      * @param DataObject\ClassDefinition\Data[] $commonFields
      */
-    protected function processAvailableFieldDefinitions(array $fds, bool &$firstOne, array &$commonFields)
+    protected function processAvailableFieldDefinitions(array $fds, bool &$firstOne, array &$commonFields): void
     {
         foreach ($fds as $fd) {
             if ($fd instanceof DataObject\ClassDefinition\Data\Fieldcollections || $fd instanceof DataObject\ClassDefinition\Data\Objectbricks

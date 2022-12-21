@@ -32,7 +32,7 @@ abstract class PimcoreLocationAwareConfigDao implements DaoInterface
 
     private Config\LocationAwareConfigRepository $locationAwareConfigRepository;
 
-    public function configure()
+    public function configure(): void
     {
         $params = func_get_arg(0);
         $this->settingsStoreScope = $params['settingsStoreScope'] ?? 'pimcore_config';

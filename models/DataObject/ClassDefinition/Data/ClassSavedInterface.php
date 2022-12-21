@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 /**
  * Pimcore
@@ -14,9 +13,11 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter;
+namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
-interface GetterInterface
+use Pimcore\Model\DataObject;
+
+interface ClassSavedInterface
 {
-    public function get(object $object, array $config = null): mixed;
+    public function classSaved(DataObject\ClassDefinition $class, array $params = []): void;
 }
