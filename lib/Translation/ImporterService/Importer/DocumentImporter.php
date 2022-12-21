@@ -25,7 +25,7 @@ class DocumentImporter extends AbstractElementImporter
     /**
      * {@inheritdoc}
      */
-    protected function importAttribute(Element\ElementInterface $element, string $targetLanguage, Attribute $attribute)
+    protected function importAttribute(Element\ElementInterface $element, string $targetLanguage, Attribute $attribute): void
     {
         parent::importAttribute($element, $targetLanguage, $attribute);
 
