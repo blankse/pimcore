@@ -1019,7 +1019,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
             }
 
             if ($groupIdList) {
-                $fieldname = $request->get('fieldname');
+                $fieldname = $request->request->get('fieldname');
                 $groupList = new Classificationstore\GroupConfig\Listing();
                 $groupCondition = 'id in (' . implode(',', $groupIdList) . ')';
                 $groupList->setCondition($groupCondition);
