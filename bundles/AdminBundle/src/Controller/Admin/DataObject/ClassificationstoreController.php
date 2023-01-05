@@ -198,8 +198,8 @@ class ClassificationstoreController extends AdminController implements KernelCon
 
         $storeIdFromDefinition = 0;
         $allowedCollectionIds = [];
-        if ($oid = $request->query->get('oid')) {
-            $object = DataObject\Concrete::getById((int) $oid);
+        if ($oid = $request->query->getInt('oid')) {
+            $object = DataObject\Concrete::getById($oid);
             $class = $object->getClass();
             /** @var DataObject\ClassDefinition\Data\Classificationstore $fd */
             $fd = $class->getFieldDefinition($request->query->get('fieldname'));
@@ -242,8 +242,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
             $conditionParts[] = '('.implode(' OR ', $searchFilterConditions).')';
         }
 
-        $storeId = $request->query->get('storeId');
-        $storeId = $storeId ? (int) $storeId : (int) $storeIdFromDefinition;
+        $storeId = $request->query->getInt('storeId', $storeIdFromDefinition);
 
         $conditionParts[] = ' (storeId = ' . $db->quote($storeId) . ')';
 
