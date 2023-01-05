@@ -44,9 +44,7 @@ class LogController extends AdminController implements KernelControllerEventInte
     }
 
     /**
-     * @Route("/log/show", name="pimcore_admin_log_show", methods={"GET", "POST"})
-     *
-     *
+     * @Route("/log/show", name="pimcore_admin_log_show", methods={"POST"})
      */
     public function showAction(Request $request, Connection $db): JsonResponse
     {
@@ -54,13 +52,10 @@ class LogController extends AdminController implements KernelControllerEventInte
         $qb
             ->select('*')
             ->from(ApplicationLoggerDb::TABLE_NAME)
-            ->setFirstResult((int) $request->get('start', 0))
-            ->setMaxResults((int) $request->get('limit', 50));
+            ->setFirstResult($request->request->getInt('start'))
+            ->setMaxResults($request->request->getInt('limit', 50));
 
-        $sortingSettings = QueryParams::extractSortingSettings(array_merge(
-            $request->request->all(),
-            $request->query->all()
-        ));
+        $sortingSettings = QueryParams::extractSortingSettings($request->request->all());
 
         if ($sortingSettings['orderKey']) {
             $qb->orderBy($sortingSettings['orderKey'], $sortingSettings['order']);

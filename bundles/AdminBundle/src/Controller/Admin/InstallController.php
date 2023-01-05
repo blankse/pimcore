@@ -33,18 +33,10 @@ class InstallController extends AdminController
 {
     /**
      * @Route("/check", name="pimcore_admin_install_check", methods={"GET", "POST"})
-     *
-     * @param Request $request
-     * @param Connection $db
-     * @param Profiler|null $profiler
-     *
-     * @return Response
      */
     public function checkAction(Request $request, Connection $db, ?Profiler $profiler): Response
     {
-        if ($profiler) {
-            $profiler->disable();
-        }
+        $profiler?->disable();
 
         $viewParams = Requirements::checkAll($db);
         $viewParams['headless'] = $request->query->getBoolean('headless') || $request->request->getBoolean('headless');

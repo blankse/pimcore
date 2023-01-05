@@ -24,21 +24,16 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class TemplateResolver extends AbstractRequestResolver
 {
-    /**
-     * @param Request|null $request
-     *
-     * @return null|string
-     */
     public function getTemplate(Request $request = null): ?string
     {
         if (null === $request) {
             $request = $this->getCurrentRequest();
         }
 
-        return $request->get(DynamicRouter::CONTENT_TEMPLATE);
+        return $request->attributes->get(DynamicRouter::CONTENT_TEMPLATE);
     }
 
-    public function setTemplate(Request $request, string $template)
+    public function setTemplate(Request $request, string $template): void
     {
         $request->attributes->set(DynamicRouter::CONTENT_TEMPLATE, $template);
     }

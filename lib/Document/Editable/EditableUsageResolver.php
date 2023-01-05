@@ -49,7 +49,7 @@ class EditableUsageResolver
         $this->renderer->render($document, [
             EditmodeResolver::ATTRIBUTE_EDITMODE => true,
             Block::ATTRIBUTE_IGNORE_EDITMODE_INDICES => true,
-            ]);
+        ]);
         $names = $this->subscriber->getRecordedEditableNames();
         $this->unregisterEventSubscriber();
 

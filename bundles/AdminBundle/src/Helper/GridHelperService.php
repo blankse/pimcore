@@ -671,17 +671,10 @@ class GridHelperService
         $db = \Pimcore\Db::get();
         $folder = Model\Asset::getById($allParams['folderId']);
 
-        $start = 0;
-        $limit = null;
+        $start = $allParams['start'] ?? 0;
+        $limit = $allParams['limit'] ?? null;
         $orderKey = 'id';
         $order = 'ASC';
-
-        if (isset($allParams['limit'])) {
-            $limit = $allParams['limit'];
-        }
-        if (isset($allParams['start'])) {
-            $start = $allParams['start'];
-        }
 
         $orderKeyQuote = true;
         $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings($allParams);

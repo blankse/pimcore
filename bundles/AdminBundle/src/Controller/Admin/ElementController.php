@@ -41,10 +41,6 @@ class ElementController extends AdminController
 {
     /**
      * @Route("/element/lock-element", name="pimcore_admin_element_lockelement", methods={"PUT"})
-     *
-     * @param Request $request
-     *
-     * @return Response
      */
     public function lockElementAction(Request $request): Response
     {
@@ -55,24 +51,16 @@ class ElementController extends AdminController
 
     /**
      * @Route("/element/unlock-element", name="pimcore_admin_element_unlockelement", methods={"PUT"})
-     *
-     * @param Request $request
-     *
-     * @return Response
      */
     public function unlockElementAction(Request $request): Response
     {
-        Element\Editlock::unlock((int)$request->get('id'), $request->get('type'));
+        Element\Editlock::unlock($request->request->getInt('id'), $request->request->get('type'));
 
         return $this->adminJson(['success' => true]);
     }
 
     /**
      * @Route("/element/unlock-elements", name="pimcore_admin_element_unlockelements", methods={"POST"})
-     *
-     * @param Request $request
-     *
-     * @return Response
      */
     public function unlockElementsAction(Request $request): Response
     {
@@ -88,10 +76,6 @@ class ElementController extends AdminController
      * Returns the element data denoted by the given type and ID or path.
      *
      * @Route("/element/get-subtype", name="pimcore_admin_element_getsubtype", methods={"GET"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
      */
     public function getSubtypeAction(Request $request): JsonResponse
     {
@@ -151,14 +135,10 @@ class ElementController extends AdminController
 
     /**
      * @Route("/element/note-types", name="pimcore_admin_element_notetypes", methods={"GET"})
-     *
-     * @param Request $request
-     *
-     * @return \Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse|JsonResponse
      */
     public function noteTypes(Request $request): \Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse|JsonResponse
     {
-        switch ($request->get('ctype')) {
+        switch ($request->query->get('ctype')) {
             case 'document':
                 return $this->processNoteTypesFromParameters(PimcoreAdminExtension::PARAM_DOCUMENTS_NOTES_EVENTS_TYPES);
             case 'asset':
@@ -172,10 +152,6 @@ class ElementController extends AdminController
 
     /**
      * @Route("/element/note-list", name="pimcore_admin_element_notelist", methods={"POST"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
      */
     public function noteListAction(Request $request): JsonResponse
     {
@@ -194,9 +170,8 @@ class ElementController extends AdminController
 
         $list = new Element\Note\Listing();
 
-        $offset = (int) $request->get('start', 0);
-        $limit = $request->get('limit');
-        $limit = $limit ? (int) $limit : null;
+        $offset = $request->request->getInt('start');
+        $limit = $request->request->getInt('limit') ?: null;
 
         $list->setLimit($limit);
         $list->setOffset($offset);
@@ -211,7 +186,7 @@ class ElementController extends AdminController
         }
 
         $conditions = [];
-        $filterText = $request->get('filterText');
+        $filterText = $request->request->get('filterText');
 
         if ($filterText) {
             $conditions[] = '('
@@ -223,7 +198,7 @@ class ElementController extends AdminController
                 . ')';
         }
 
-        $filterJson = $request->get('filter');
+        $filterJson = $request->request->get('filter');
         if ($filterJson) {
             $db = Db::get();
             $filters = $this->decodeJson($filterJson);
@@ -278,8 +253,8 @@ class ElementController extends AdminController
             }
         }
 
-        if ($request->get('cid') && $request->get('ctype')) {
-            $conditions[] = '(cid = ' . $list->quote($request->get('cid')) . ' AND ctype = ' . $list->quote($request->get('ctype')) . ')';
+        if ($request->request->get('cid') && $request->request->get('ctype')) {
+            $conditions[] = '(cid = ' . $list->quote($request->request->get('cid')) . ' AND ctype = ' . $list->quote($request->request->get('ctype')) . ')';
         }
 
         if (!empty($conditions)) {
@@ -305,22 +280,18 @@ class ElementController extends AdminController
 
     /**
      * @Route("/element/note-add", name="pimcore_admin_element_noteadd", methods={"POST"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
      */
     public function noteAddAction(Request $request): JsonResponse
     {
         $this->checkPermission('notes_events');
 
         $note = new Element\Note();
-        $note->setCid((int) $request->get('cid'));
-        $note->setCtype($request->get('ctype'));
+        $note->setCid($request->request->getInt('cid'));
+        $note->setCtype($request->request->get('ctype'));
         $note->setDate(time());
-        $note->setTitle($request->get('title'));
-        $note->setDescription($request->get('description'));
-        $note->setType($request->get('type'));
+        $note->setTitle($request->request->get('title'));
+        $note->setDescription($request->request->get('description'));
+        $note->setType($request->request->get('type'));
         $note->setLocked(false);
         $note->save();
 
@@ -331,10 +302,6 @@ class ElementController extends AdminController
 
     /**
      * @Route("/element/find-usages", name="pimcore_admin_element_findusages", methods={"GET"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
      */
     public function findUsagesAction(Request $request): JsonResponse
     {
@@ -349,14 +316,14 @@ class ElementController extends AdminController
         $success = false;
         $hasHidden = false;
         $total = 0;
-        $limit = (int)$request->get('limit', 50);
-        $offset = (int)$request->get('start', 0);
+        $limit = $request->query->getInt('limit', 50);
+        $offset = $request->query->getInt('start');
 
         if ($element instanceof Element\ElementInterface) {
             $total = $element->getDependencies()->getRequiredByTotalCount();
 
-            if ($request->get('sort')) {
-                $sort = json_decode($request->get('sort'))[0];
+            if ($request->query->get('sort')) {
+                $sort = json_decode($request->query->get('sort'))[0];
                 $orderBy = $sort->property;
                 $orderDirection = $sort->direction;
             } else {
@@ -400,10 +367,6 @@ class ElementController extends AdminController
 
     /**
      * @Route("/element/get-replace-assignments-batch-jobs", name="pimcore_admin_element_getreplaceassignmentsbatchjobs", methods={"GET"})
-     *
-     * @param Request $request
-     *
-     * @return \Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse
      */
     public function getReplaceAssignmentsBatchJobsAction(Request $request): \Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse
     {
@@ -427,10 +390,6 @@ class ElementController extends AdminController
 
     /**
      * @Route("/element/replace-assignments", name="pimcore_admin_element_replaceassignments", methods={"POST"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
      */
     public function replaceAssignmentsAction(Request $request): JsonResponse
     {
@@ -441,12 +400,12 @@ class ElementController extends AdminController
         $targetEl = Element\Service::getElementById($request->request->get('targetType'), $request->request->getInt('targetId'));
 
         if ($element && $sourceEl && $targetEl
-            && $request->get('sourceType') == $request->get('targetType')
+            && $request->request->get('sourceType') == $request->request->get('targetType')
             && $sourceEl->getType() == $targetEl->getType()
             && $element->isAllowed('save')
         ) {
             $rewriteConfig = [
-                $request->get('sourceType') => [
+                $request->request->get('sourceType') => [
                     $sourceEl->getId() => $targetEl->getId(),
                 ],
             ];
@@ -475,10 +434,6 @@ class ElementController extends AdminController
 
     /**
      * @Route("/element/unlock-propagate", name="pimcore_admin_element_unlockpropagate", methods={"PUT"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
      */
     public function unlockPropagateAction(Request $request): JsonResponse
     {
@@ -497,10 +452,6 @@ class ElementController extends AdminController
 
     /**
      * @Route("/element/type-path", name="pimcore_admin_element_typepath", methods={"GET"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
      */
     public function typePathAction(Request $request): JsonResponse
     {
@@ -540,14 +491,10 @@ class ElementController extends AdminController
 
     /**
      * @Route("/element/version-update", name="pimcore_admin_element_versionupdate", methods={"PUT"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
      */
     public function versionUpdateAction(Request $request): JsonResponse
     {
-        $data = $this->decodeJson($request->get('data'));
+        $data = $this->decodeJson($request->request->get('data'));
 
         $version = Version::getById($data['id']);
 
@@ -563,23 +510,19 @@ class ElementController extends AdminController
     /**
      * @Route("/element/get-nice-path", name="pimcore_admin_element_getnicepath", methods={"POST"})
      *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     *
      * @throws \Exception
      */
     public function getNicePathAction(Request $request): JsonResponse
     {
-        $source = $this->decodeJson($request->get('source'));
+        $source = $this->decodeJson($request->request->get('source'));
         if ($source['type'] != 'object') {
             throw new \Exception('currently only objects as source elements are supported');
         }
         $result = [];
         $id = $source['id'];
         $source = DataObject\Concrete::getById($id);
-        if ($request->get('context')) {
-            $context = $this->decodeJson($request->get('context'));
+        if ($request->request->get('context')) {
+            $context = $this->decodeJson($request->request->get('context'));
         } else {
             $context = [];
         }
@@ -589,12 +532,12 @@ class ElementController extends AdminController
 
         $fd = $this->getNicePathFormatterFieldDefinition($source, $context);
 
-        $targets = $this->decodeJson($request->get('targets'));
+        $targets = $this->decodeJson($request->request->get('targets'));
 
         $result = $this->convertResultWithPathFormatter($source, $context, $result, $targets);
 
         if ($request->request->getBoolean('loadEditModeData')) {
-            $idProperty = $request->get('idProperty', 'id');
+            $idProperty = $request->request->get('idProperty', 'id');
             $methodName = 'get' . ucfirst($fieldname);
             if ($ownerType == 'object' && method_exists($source, $methodName)) {
                 $data = $source->$methodName();
@@ -622,16 +565,12 @@ class ElementController extends AdminController
     /**
      * @Route("/element/get-versions", name="pimcore_admin_element_getversions", methods={"GET"})
      *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     *
      * @throws \Exception
      */
     public function getVersionsAction(Request $request): JsonResponse
     {
-        $id = (int)$request->get('id');
-        $type = $request->get('elementType');
+        $id = $request->query->getInt('id');
+        $type = $request->query->get('elementType');
         $allowedTypes = ['asset', 'document', 'object'];
 
         if ($id && in_array($type, $allowedTypes)) {
@@ -682,42 +621,28 @@ class ElementController extends AdminController
 
     /**
      * @Route("/element/delete-draft", name="pimcore_admin_element_deletedraft", methods={"DELETE"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
      */
     public function deleteDraftAction(Request $request): JsonResponse
     {
-        $version = Version::getById((int) $request->get('id'));
-        if ($version) {
-            $version->delete();
-        }
+        $version = Version::getById($request->request->getInt('id'));
+        $version?->delete();
 
         return $this->adminJson(['success' => true]);
     }
 
     /**
      * @Route("/element/delete-version", name="pimcore_admin_element_deleteversion", methods={"DELETE"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
      */
     public function deleteVersionAction(Request $request): JsonResponse
     {
-        $version = Model\Version::getById((int) $request->get('id'));
-        $version->delete();
+        $version = Model\Version::getById($request->request->getInt('id'));
+        $version?->delete();
 
         return $this->adminJson(['success' => true]);
     }
 
     /**
      * @Route("/element/delete-all-versions", name="pimcore_admin_element_deleteallversion", methods={"DELETE"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
      */
     public function deleteAllVersionAction(Request $request): JsonResponse
     {
@@ -736,18 +661,14 @@ class ElementController extends AdminController
 
     /**
      * @Route("/element/get-requires-dependencies", name="pimcore_admin_element_getrequiresdependencies", methods={"GET"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
      */
     public function getRequiresDependenciesAction(Request $request): JsonResponse
     {
         $id = $request->query->getInt('id');
         $type = $request->query->get('elementType');
         $allowedTypes = ['asset', 'document', 'object'];
-        $offset = (int) $request->get('start', 0);
-        $limit = (int) $request->get('limit', 25);
+        $offset = $request->query->getInt('start');
+        $limit = $request->query->getInt('limit', 25);
 
         if ($id && in_array($type, $allowedTypes)) {
             $element = Model\Element\Service::getElementById($type, $id);
@@ -769,18 +690,14 @@ class ElementController extends AdminController
 
     /**
      * @Route("/element/get-required-by-dependencies", name="pimcore_admin_element_getrequiredbydependencies", methods={"GET"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
      */
     public function getRequiredByDependenciesAction(Request $request): JsonResponse
     {
         $id = $request->query->getInt('id');
         $type = $request->query->get('elementType');
         $allowedTypes = ['asset', 'document', 'object'];
-        $offset = (int) $request->get('start', 0);
-        $limit = (int) $request->get('limit', 25);
+        $offset = $request->query->getInt('start');
+        $limit = $request->query->getInt('limit', 25);
 
         if ($id && in_array($type, $allowedTypes)) {
             $element = Model\Element\Service::getElementById($type, $id);
@@ -802,16 +719,12 @@ class ElementController extends AdminController
 
     /**
      * @Route("/element/get-predefined-properties", name="pimcore_admin_element_getpredefinedproperties", methods={"GET"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
      */
     public function getPredefinedPropertiesAction(Request $request): JsonResponse
     {
         $properties = [];
-        $type = $request->get('elementType');
-        $query = $request->get('query');
+        $type = $request->query->get('elementType');
+        $query = $request->query->get('query');
         $allowedTypes = ['asset', 'document', 'object'];
 
         if (in_array($type, $allowedTypes, true)) {
@@ -837,10 +750,6 @@ class ElementController extends AdminController
 
     /**
      * @Route("/element/analyze-permissions", name="pimcore_admin_element_analyzepermissions", methods={"POST"})
-     *
-     * @param Request $request
-     *
-     * @return Response
      */
     public function analyzePermissionsAction(Request $request): Response
     {
@@ -870,11 +779,6 @@ class ElementController extends AdminController
     }
 
     /**
-     * @param DataObject\Concrete $source
-     * @param array $context
-     *
-     * @return bool|DataObject\ClassDefinition\Data|null
-     *
      * @throws \Exception
      */
     protected function getNicePathFormatterFieldDefinition(DataObject\Concrete $source, array $context): DataObject\ClassDefinition\Data|bool|null
@@ -918,13 +822,6 @@ class ElementController extends AdminController
     }
 
     /**
-     * @param DataObject\Concrete $source
-     * @param array $context
-     * @param array $result
-     * @param array $targets
-     *
-     * @return array
-     *
      * @throws \Exception
      */
     protected function convertResultWithPathFormatter(DataObject\Concrete $source, array $context, array $result, array $targets): array

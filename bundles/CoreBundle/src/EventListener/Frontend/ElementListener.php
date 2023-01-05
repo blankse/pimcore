@@ -107,8 +107,8 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 
     protected function handleVersion(Request $request, Document $document): Document
     {
-        if ($v = $request->get('v')) {
-            if ($version = Version::getById((int) $v)) {
+        if ($v = $request->query->getInt('v')) {
+            if ($version = Version::getById($v)) {
                 if ($version->getPublic()) {
                     $this->logger->info('Setting version to {version} for document {document}', [
                         'version' => $version->getId(),
@@ -119,7 +119,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
                 }
             } else {
                 $this->logger->notice('Failed to load {version} for document {document}', [
-                    'version' => $request->get('v'),
+                    'version' => $v,
                     'document' => $document->getFullPath(),
                 ]);
             }

@@ -42,7 +42,7 @@ class Redirect implements ActionHandlerInterface
         }
 
         // don't redirect multiple times to avoid loops
-        if (!empty($request->get('_ptr'))) {
+        if (!empty($request->query->get('_ptr'))) {
             return;
         }
 

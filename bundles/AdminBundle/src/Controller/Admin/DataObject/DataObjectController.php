@@ -2051,12 +2051,8 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
     /**
      * @Route("/preview", name="preview", methods={"GET"})
-     *
-     * @param Request $request
-     *
-     * @return Response|RedirectResponse
      */
-    public function previewAction(Request $request): RedirectResponse|Response
+    public function previewAction(Request $request): Response
     {
         $id = $request->query->getInt('id');
         $object = DataObject\Service::getElementFromSession('object', $id);

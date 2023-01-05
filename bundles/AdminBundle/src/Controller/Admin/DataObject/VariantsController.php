@@ -37,10 +37,6 @@ class VariantsController extends AdminController
 
     /**
      * @Route("/update-key", name="updatekey", methods={"PUT"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
      */
     public function updateKeyAction(Request $request): JsonResponse
     {

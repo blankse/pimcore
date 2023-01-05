@@ -90,7 +90,7 @@ class LoginController extends AdminController implements KernelControllerEventIn
         Config $config,
         EventDispatcherInterface $eventDispatcher
     ): RedirectResponse|Response {
-        if ($request->get('_route') === 'pimcore_admin_login_fallback') {
+        if ($request->attributes->get('_route') === 'pimcore_admin_login_fallback') {
             return $this->redirectToRoute('pimcore_admin_login', $request->query->all(), Response::HTTP_MOVED_PERMANENTLY);
         }
 

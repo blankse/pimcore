@@ -24,16 +24,16 @@ use Carbon\Carbon;
 class QueryParams
 {
     /**
-     * @param array $params
+     * @param array{sort?: string} $params
      *
-     * @return array  [orderKey => null|string, order => null|string]
+     * @return array{orderKey: ?string, order: ?string}
      */
     public static function extractSortingSettings(array $params): array
     {
         $orderKey = null;
         $order = null;
 
-        $sortParam = isset($params['sort']) ? $params['sort'] : false;
+        $sortParam = $params['sort'] ?? false;
         if ($sortParam) {
             $sortParam = json_decode($sortParam, true);
             $sortParam = $sortParam[0];

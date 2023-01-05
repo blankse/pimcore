@@ -434,15 +434,10 @@ class SearchController extends AdminController
 
     /**
      * @Route("/quicksearch", name="pimcore_admin_searchadmin_search_quicksearch", methods={"GET"})
-     *
-     * @param Request $request
-     * @param EventDispatcherInterface $eventDispatcher
-     *
-     * @return JsonResponse
      */
     public function quicksearchAction(Request $request, EventDispatcherInterface $eventDispatcher): JsonResponse
     {
-        $query = $this->filterQueryParam($request->get('query', ''));
+        $query = $this->filterQueryParam($request->query->get('query', ''));
         if (!preg_match('/[\+\-\*"]/', $query)) {
             // check for a boolean operator (which was not filtered by filterQueryParam()),
             // if present, do not add asterisk at the end of the query
@@ -507,11 +502,6 @@ class SearchController extends AdminController
 
     /**
      * @Route("/quicksearch-get-by-id", name="pimcore_admin_searchadmin_search_quicksearch_by_id", methods={"GET"})
-     *
-     * @param Request $request
-     * @param Config $config
-     *
-     * @return JsonResponse
      */
     public function quicksearchByIdAction(Request $request, Config $config): JsonResponse
     {

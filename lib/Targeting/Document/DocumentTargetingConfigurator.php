@@ -112,7 +112,7 @@ class DocumentTargetingConfigurator
 
         // ptg = pimcore target group = will be used from the admin UI to show target specific data
         // in editmode
-        if ($ptg = $request->get('_ptg')) {
+        if ($ptg = $request->query->get('_ptg')) {
             $targetGroup = TargetGroup::getById((int)$ptg);
 
             if ($targetGroup) {

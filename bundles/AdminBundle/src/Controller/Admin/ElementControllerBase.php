@@ -47,20 +47,12 @@ abstract class ElementControllerBase extends AdminController
 
     /**
      * @Route("/tree-get-root", name="treegetroot", methods={"GET"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
      */
     public function treeGetRootAction(Request $request): JsonResponse
     {
-        $type = $request->get('elementType');
+        $type = $request->query->get('elementType');
         $allowedTypes = ['asset', 'document', 'object'];
-
-        $id = 1;
-        if ($request->get('id')) {
-            $id = (int)$request->get('id');
-        }
+        $id = $request->query->getInt('id', 1);
 
         if (in_array($type, $allowedTypes)) {
             /** @var Document|Asset|AbstractObject $root */
@@ -92,9 +84,9 @@ abstract class ElementControllerBase extends AdminController
 
         $totalChildren = 0;
 
-        $ids = $request->get('id');
+        $ids = $request->query->get('id');
         $ids = explode(',', $ids);
-        $type = $request->get('type');
+        $type = $request->query->get('type');
 
         foreach ($ids as $id) {
             try {

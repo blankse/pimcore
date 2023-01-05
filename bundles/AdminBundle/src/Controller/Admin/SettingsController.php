@@ -273,50 +273,51 @@ class SettingsController extends AdminController
 
     /**
      * @Route("/properties", name="pimcore_admin_settings_properties", methods={"POST"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
      */
     public function propertiesAction(Request $request): JsonResponse
     {
-        if ($request->get('data')) {
+        if ($data = $request->request->get('data')) {
             $this->checkPermission('predefined_properties');
+            $action = $request->query->get('xaction');
 
-            if ($request->get('xaction') == 'destroy') {
-                $data = $this->decodeJson($request->get('data'));
+            if ($action === 'destroy') {
+                $data = $this->decodeJson($data);
                 $id = $data['id'];
                 $property = Property\Predefined::getById($id);
-                if (!$property->isWriteable()) {
-                    throw new ConfigWriteException();
-                }
-                $property->delete();
+                if ($property) {
+                    if (!$property->isWriteable()) {
+                        throw new ConfigWriteException();
+                    }
+                    $property->delete();
 
-                return $this->adminJson(['success' => true, 'data' => []]);
-            } elseif ($request->get('xaction') == 'update') {
-                $data = $this->decodeJson($request->get('data'));
+                    return $this->adminJson(['success' => true, 'data' => []]);
+                }
+            } elseif ($action === 'update') {
+                $data = $this->decodeJson($data);
 
                 // save type
                 $property = Property\Predefined::getById($data['id']);
-                if (!$property->isWriteable()) {
-                    throw new ConfigWriteException();
+                if ($property) {
+                    if (!$property->isWriteable()) {
+                        throw new ConfigWriteException();
+                    }
+                    if (is_array($data['ctype'])) {
+                        $data['ctype'] = implode(',', $data['ctype']);
+                    }
+                    $property->setValues($data);
+
+                    $property->save();
+
+                    $responseData = $property->getObjectVars();
+                    $responseData['writeable'] = $property->isWriteable();
+
+                    return $this->adminJson(['data' => $responseData, 'success' => true]);
                 }
-                if (is_array($data['ctype'])) {
-                    $data['ctype'] = implode(',', $data['ctype']);
-                }
-                $property->setValues($data);
-
-                $property->save();
-
-                $responseData = $property->getObjectVars();
-                $responseData['writeable'] = $property->isWriteable();
-
-                return $this->adminJson(['data' => $responseData, 'success' => true]);
-            } elseif ($request->get('xaction') == 'create') {
+            } elseif ($action === 'create') {
                 if (!(new Property\Predefined())->isWriteable()) {
                     throw new ConfigWriteException();
                 }
-                $data = $this->decodeJson($request->get('data'));
+                $data = $this->decodeJson($data);
                 unset($data['id']);
 
                 // save type
@@ -334,7 +335,7 @@ class SettingsController extends AdminController
             // get list of types
             $list = new Property\Predefined\Listing();
 
-            if ($filter = $request->get('filter')) {
+            if ($filter = $request->request->get('filter')) {
                 $list->setFilter(function (Property\Predefined $predefined) use ($filter) {
                     foreach ($predefined->getObjectVars() as $value) {
                         if ($value) {
@@ -794,10 +795,10 @@ class SettingsController extends AdminController
      */
     public function staticroutesAction(Request $request): JsonResponse
     {
-        if ($request->get('data')) {
+        if ($data = $request->request->get('data')) {
             $this->checkPermission('routes');
 
-            $data = $this->decodeJson($request->get('data'));
+            $data = $this->decodeJson($data);
 
             if (is_array($data)) {
                 foreach ($data as &$value) {
@@ -807,8 +808,8 @@ class SettingsController extends AdminController
                 }
             }
 
-            if ($request->get('xaction') == 'destroy') {
-                $data = $this->decodeJson($request->get('data'));
+            $action = $request->query->get('xaction');
+            if ($action === 'destroy') {
                 $id = $data['id'];
                 $route = Staticroute::getById($id);
                 if (!$route->isWriteable()) {
@@ -817,7 +818,8 @@ class SettingsController extends AdminController
                 $route->delete();
 
                 return $this->adminJson(['success' => true, 'data' => []]);
-            } elseif ($request->get('xaction') == 'update') {
+            }
+            if ($action === 'update') {
                 // save routes
                 $route = Staticroute::getById($data['id']);
                 if (!$route->isWriteable()) {
@@ -829,7 +831,8 @@ class SettingsController extends AdminController
                 $route->save();
 
                 return $this->adminJson(['data' => $route->getObjectVars(), 'success' => true]);
-            } elseif ($request->get('xaction') == 'create') {
+            }
+            if ($action === 'create') {
                 if (!(new Staticroute())->isWriteable()) {
                     throw new ConfigWriteException();
                 }
@@ -1452,8 +1455,8 @@ class SettingsController extends AdminController
     {
         $this->checkPermission('website_settings');
 
-        if ($request->get('data')) {
-            $data = $this->decodeJson($request->get('data'));
+        if ($data = $request->request->get('data')) {
+            $data = $this->decodeJson($data);
 
             if (is_array($data)) {
                 foreach ($data as &$value) {
@@ -1463,7 +1466,8 @@ class SettingsController extends AdminController
                 }
             }
 
-            if ($request->get('xaction') == 'destroy') {
+            $action = $request->query->get('xaction');
+            if ($action === 'destroy') {
                 $id = $data['id'];
                 $setting = WebsiteSetting::getById($id);
                 if ($setting instanceof WebsiteSetting) {
@@ -1471,7 +1475,7 @@ class SettingsController extends AdminController
 
                     return $this->adminJson(['success' => true, 'data' => []]);
                 }
-            } elseif ($request->get('xaction') == 'update') {
+            } elseif ($action === 'update') {
                 // save routes
                 $setting = WebsiteSetting::getById($data['id']);
                 if ($setting instanceof WebsiteSetting) {
@@ -1494,7 +1498,7 @@ class SettingsController extends AdminController
 
                     return $this->adminJson(['data' => $data, 'success' => true]);
                 }
-            } elseif ($request->get('xaction') == 'create') {
+            } elseif ($action === 'create') {
                 unset($data['id']);
 
                 // save route
@@ -1508,8 +1512,8 @@ class SettingsController extends AdminController
         } else {
             $list = new WebsiteSetting\Listing();
 
-            $list->setLimit((int) $request->get('limit', 50));
-            $list->setOffset((int) $request->get('start', 0));
+            $list->setLimit($request->request->getInt('limit', 50));
+            $list->setOffset($request->request->getInt('start'));
 
             $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
             if ($sortingSettings['orderKey']) {
@@ -1520,8 +1524,8 @@ class SettingsController extends AdminController
                 $list->setOrder('asc');
             }
 
-            if ($request->get('filter')) {
-                $list->setCondition('`name` LIKE ' . $list->quote('%'.$request->get('filter').'%'));
+            if ($filter = $request->request->get('filter')) {
+                $list->setCondition('`name` LIKE ' . $list->quote('%'.$filter.'%'));
             }
 
             $totalCount = $list->getTotalCount();
