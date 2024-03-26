@@ -17,9 +17,12 @@ declare(strict_types=1);
 namespace Pimcore\Model\User\Role;
 
 use Pimcore\Model;
+use Pimcore\Model\User\Role;
 
 /**
  * @method \Pimcore\Model\User\Role\Listing\Dao getDao()
+ * @method Role[] load()
+ * @method Role[] getData()
  */
 class Listing extends Model\User\Listing\AbstractListing
 {
@@ -28,7 +31,7 @@ class Listing extends Model\User\Listing\AbstractListing
     /**
      * Alias for $this->getItems()
      *
-     * @return \Pimcore\Model\User\Role[]
+     * @return Role[]
      */
     public function getRoles(): array
     {

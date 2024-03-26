@@ -19,6 +19,7 @@ namespace Pimcore\Model;
 use Pimcore\Bundle\AdminBundle\Perspective\Config;
 use Pimcore\File;
 use Pimcore\Helper\TemporaryFileHelperTrait;
+use Pimcore\Image;
 use Pimcore\Model\User\Role;
 use Pimcore\Tool;
 
@@ -441,13 +442,15 @@ final class User extends User\UserRole implements UserInterface
         if ($path) {
             $handle = fopen($path, 'rb');
             $storage->writeStream($originalFileStoragePath, $handle);
-            fclose($handle);
+            if ($handle) {
+                fclose($handle);
+            }
         }
     }
 
     /**
      *
-     * @return resource
+     * @return resource|false
      */
     public function getImage(?int $width = null, ?int $height = null)
     {
@@ -466,11 +469,13 @@ final class User extends User\UserRole implements UserInterface
                 @fclose($originalImageStream);
                 $targetFile = File::getLocalTempFilePath('png');
 
-                $image = \Pimcore\Image::getInstance();
+                $image = Image::getInstance();
                 if($image->load($localFile)) {
                     $image->cover($width, $height);
                     $image->save($targetFile, 'png');
-                    $storage->write($this->getThumbnailImageStoragePath(), file_get_contents($targetFile));
+                    if ($targetFileContents = file_get_contents($targetFile)) {
+                        $storage->write($this->getThumbnailImageStoragePath(), $targetFileContents);
+                    }
                 }
             }
 

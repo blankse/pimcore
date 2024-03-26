@@ -21,6 +21,7 @@ use Pimcore\Model\User;
 /**
  * @method \Pimcore\Model\User\Listing\Dao getDao()
  * @method User[] load()
+ * @method User[] getData()
  */
 class Listing extends Listing\AbstractListing
 {
@@ -29,7 +30,7 @@ class Listing extends Listing\AbstractListing
     /**
      * Alias for $this->getItems()
      *
-     * @return \Pimcore\Model\User[]
+     * @return User[]
      */
     public function getUsers(): array
     {

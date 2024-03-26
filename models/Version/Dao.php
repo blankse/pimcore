@@ -125,7 +125,7 @@ class Dao extends Model\Dao\AbstractDao
 
         Logger::debug("ignore ID's: " . $ignoreIdsList);
 
-        if (!empty($elementTypes)) {
+        if ($elementTypes) {
             $count = 0;
             $stop = false;
             foreach ($elementTypes as $elementType) {
@@ -134,7 +134,7 @@ class Dao extends Model\Dao\AbstractDao
                     $deadline = time() - ($elementType['days'] * 86400);
                     $tmpVersionIds = $this->db->fetchFirstColumn('SELECT id FROM versions as a WHERE ctype = ? AND date < ? AND public=0 AND id NOT IN (' . $ignoreIdsList . ')', [$elementType['elementType'], $deadline]);
                     $versionIds = array_merge($versionIds, $tmpVersionIds);
-                } else {
+                } elseif (isset($elementType['steps'])) {
                     // by steps
                     $versionData = $this->db->executeQuery('SELECT cid FROM versions WHERE ctype = ? AND public=0 AND id NOT IN (' . $ignoreIdsList . ') GROUP BY cid HAVING COUNT(*) > ? LIMIT 1000', [$elementType['elementType'], $elementType['steps'] + 1]);
                     while ($versionInfo = $versionData->fetchAssociative()) {

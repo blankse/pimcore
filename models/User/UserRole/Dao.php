@@ -61,6 +61,7 @@ class Dao extends Model\User\AbstractUser\Dao
             $className = '\\Pimcore\\Model\\User\\Workspace\\' . $baseClassName;
             $result = $this->db->fetchAllAssociative('SELECT * FROM users_workspaces_' . $type . ' WHERE userId = ?', [$this->model->getId()]);
             foreach ($result as $row) {
+                /** @var Model\User\Workspace\AbstractWorkspace $workspace */
                 $workspace = new $className();
                 $row['list'] = (bool)$row['list'];
                 $row['view'] = (bool)$row['view'];

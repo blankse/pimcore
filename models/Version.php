@@ -159,7 +159,7 @@ final class Version extends AbstractModel
             $dataString = Serialize::serialize($condensedData);
 
             // revert all changed made by __sleep()
-            if (method_exists($data, '__wakeup')) {
+            if (is_object($data) && method_exists($data, '__wakeup')) {
                 $data->__wakeup();
             }
         } else {
@@ -189,7 +189,7 @@ final class Version extends AbstractModel
         $this->dispatchEvent(new VersionEvent($this), VersionEvents::POST_SAVE);
     }
 
-    private function marshalData(ElementInterface $data): mixed
+    private function marshalData(mixed $data): mixed
     {
         $context = [
             'source' => __METHOD__,

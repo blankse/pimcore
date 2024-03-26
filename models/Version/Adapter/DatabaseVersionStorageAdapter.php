@@ -79,13 +79,18 @@ class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
         return $this->loadData($version->getId(), $version->getCid(), $version->getCtype());
     }
 
+    /**
+     * @return resource|null
+     */
     protected function getStream(string $data): mixed
     {
         if ($data) {
             $fileName = tmpfile();
-            fwrite($fileName, $data);
+            if ($fileName) {
+                fwrite($fileName, $data);
 
-            return $fileName;
+                return $fileName;
+            }
         }
 
         return null;

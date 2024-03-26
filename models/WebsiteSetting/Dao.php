@@ -36,9 +36,8 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         $data = $this->db->fetchAssociative('SELECT * FROM website_settings WHERE id = ?', [$this->model->getId()]);
-        $this->assignVariablesToModel($data);
 
-        if (!empty($data['id'])) {
+        if ($data) {
             $this->assignVariablesToModel($data);
         } else {
             throw new NotFoundException('Website Setting with id: ' . $this->model->getId() . ' does not exist');

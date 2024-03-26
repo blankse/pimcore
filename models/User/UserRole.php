@@ -130,7 +130,7 @@ abstract class UserRole extends AbstractUser implements UserRoleInterface
         if (!in_array($permissionName, $this->permissions) && $value) {
             $this->permissions[] = $permissionName;
         } elseif (in_array($permissionName, $this->permissions) && !$value) {
-            $position = array_search($permissionName, $this->permissions);
+            $position = (int) array_search($permissionName, $this->permissions);
             array_splice($this->permissions, $position, 1);
         }
 
