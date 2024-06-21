@@ -80,6 +80,9 @@ class Breadcrumbs extends AbstractRenderer
         return $this->_separator;
     }
 
+    /**
+     * @return $this
+     */
     public function setSeparator(string $separator): static
     {
         $this->_separator = $separator;

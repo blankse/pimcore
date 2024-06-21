@@ -256,13 +256,13 @@ class Builder
      * @param string $property name of property to match against
      * @param string $value value to match property against
      *
-     * @return Page[]
+     * @return PageInterface[]
      */
     protected function findActivePages(Container $navigation, string $property, string $value): array
     {
         $filterByPrefix = new PrefixRecursiveFilterIterator($navigation, $property, $value);
         $flatten = new \RecursiveIteratorIterator($filterByPrefix, \RecursiveIteratorIterator::SELF_FIRST);
-        $filterMatches = new \CallbackFilterIterator($flatten, static fn (Page $page): bool => $page->get($property) === $value);
+        $filterMatches = new \CallbackFilterIterator($flatten, static fn (PageInterface $page): bool => $page->get($property) === $value);
 
         return iterator_to_array($filterMatches, false);
     }
@@ -272,7 +272,7 @@ class Builder
      *
      * @internal
      */
-    protected function addActiveCssClasses(Page $page, bool $isActive = false): void
+    protected function addActiveCssClasses(PageInterface $page, bool $isActive = false): void
     {
         $page->setActive(true);
 
@@ -332,7 +332,7 @@ class Builder
     }
 
     /**
-     * @return Page[]
+     * @return PageInterface[]
      *
      * @throws \Exception
      *

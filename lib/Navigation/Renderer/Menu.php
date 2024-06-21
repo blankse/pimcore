@@ -40,7 +40,7 @@ declare(strict_types=1);
 namespace Pimcore\Navigation\Renderer;
 
 use Pimcore\Navigation\Container;
-use Pimcore\Navigation\Page;
+use Pimcore\Navigation\PageInterface;
 
 class Menu extends AbstractRenderer
 {
@@ -429,11 +429,11 @@ class Menu extends AbstractRenderer
      * Returns an HTML string containing an 'a' element for the given page if
      * the page's href is not empty, and a 'span' element if it is empty
      *
-     * @param  Page $page  page to generate HTML for
+     * @param  PageInterface $page  page to generate HTML for
      *
      * @return string                      HTML string for the given page
      */
-    public function htmlify(Page $page): string
+    public function htmlify(PageInterface $page): string
     {
         $label = $page->getLabel();
         $title = $page->getTitle();
@@ -640,7 +640,7 @@ class Menu extends AbstractRenderer
         // Reset prefix for IDs
         $this->_skipPrefixForId = $skipValue;
 
-        /** @var Page $subPage */
+        /** @var PageInterface $subPage */
         foreach ($active['page'] as $subPage) {
             if (!$this->accept($subPage)) {
                 continue;

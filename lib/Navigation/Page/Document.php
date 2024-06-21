@@ -34,6 +34,9 @@ class Document extends Url
 
     protected array $customSettings = [];
 
+    /**
+     * @return $this
+     */
     public function setTabindex(?string $tabindex): static
     {
         $this->_tabindex = $tabindex;
@@ -58,6 +61,9 @@ class Document extends Url
         return $this->_accesskey;
     }
 
+    /**
+     * @return $this
+     */
     public function setRelation(?string $relation): static
     {
         $this->_relation = $relation;
@@ -70,6 +76,9 @@ class Document extends Url
         return $this->_relation;
     }
 
+    /**
+     * @return $this
+     */
     public function setDocument(Model\Document $document): static
     {
         $this->setDocumentId($document->getId());
@@ -124,6 +133,9 @@ class Document extends Url
         $this->realFullPath = $realFullPath;
     }
 
+    /**
+     * @return $this
+     */
     public function setCustomSetting(string $name, mixed $value): static
     {
         $this->customSettings[$name] = $value;
