@@ -41,7 +41,7 @@ namespace Pimcore\Navigation;
 
 use Pimcore\Navigation\Page\Url;
 
-abstract class Page extends Container
+abstract class Page extends Container implements PageInterface
 {
     /**
      * Page label
@@ -650,11 +650,6 @@ abstract class Page extends Container
         return $this;
     }
 
-    /**
-     * Returns page order used in parent container
-     *
-     * @return int|null  page order or null
-     */
     public function getOrder(): ?int
     {
         return $this->_order;
@@ -675,15 +670,6 @@ abstract class Page extends Container
         return $this;
     }
 
-    /**
-     * Returns whether page should be considered active or not
-     *
-     * @param bool $recursive  [optional] whether page should be considered
-     *                          active if any child pages are active. Default is
-     *                          false.
-     *
-     * @return bool             whether page should be considered active
-     */
     public function isActive(bool $recursive = false): bool
     {
         if (!$this->_active && $recursive) {
@@ -730,13 +716,6 @@ abstract class Page extends Container
         return $this;
     }
 
-    /**
-     * Returns a boolean value indicating whether the page is visible
-     *
-     * @param bool $recursive whether page should be considered invisible if parent is invisible. Default is false.
-     *
-     * @return bool whether page should be considered visible
-     */
     public function isVisible(bool $recursive = false): bool
     {
         if ($recursive && isset($this->_parent) && $this->_parent instanceof self) {
@@ -838,19 +817,6 @@ abstract class Page extends Container
         return $this;
     }
 
-    /**
-     * Returns the value of the given property
-     *
-     * If the given property is native (id, class, title, etc), the matching
-     * get method will be used. Otherwise, it will return the matching custom
-     * property, or null if not found.
-     *
-     * @param  string $property           property name
-     *
-     * @return mixed                      the property's value or null
-     *
-     * @throws \Exception  if property name is invalid
-     */
     public function get(string $property): mixed
     {
         if (empty($property)) {
@@ -1049,11 +1015,6 @@ abstract class Page extends Container
         return $this->_properties;
     }
 
-    /**
-     * Returns a unique code value for the page
-     *
-     * @return int a unique code value for this page
-     */
     final public function hashCode(): int
     {
         return \spl_object_id($this);

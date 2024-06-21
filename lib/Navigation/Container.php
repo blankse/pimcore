@@ -44,7 +44,7 @@ class Container implements \RecursiveIterator, \Countable
     /**
      * Contains sub pages
      *
-     * @var Page[]
+     * @var PageInterface[]
      */
     protected array $_pages = [];
 
@@ -101,13 +101,13 @@ class Container implements \RecursiveIterator, \Countable
      * This method will inject the container as the given page's parent by
      * calling {@link Page::setParent()}.
      *
-     * @param array|Page $page  page to add
+     * @param array|PageInterface $page  page to add
      *
      * @return $this fluent interface, returns self
      *
      * @throws \Exception if page is invalid
      */
-    public function addPage(Page|array $page): static
+    public function addPage(PageInterface|array $page): static
     {
         if ($page === $this) {
             throw new \Exception('A page cannot have itself as a parent');
@@ -140,7 +140,7 @@ class Container implements \RecursiveIterator, \Countable
     /**
      * Adds several pages at once
      *
-     * @param Page[] $pages  pages to add
+     * @param PageInterface[] $pages  pages to add
      *
      * @return $this fluent interface, returns self
      *
@@ -158,7 +158,7 @@ class Container implements \RecursiveIterator, \Countable
     /**
      * Sets pages this container should have, removing existing pages
      *
-     * @param  Page[] $pages pages to set
+     * @param  PageInterface[] $pages pages to set
      *
      * @return $this  fluent interface, returns self
      */
@@ -172,7 +172,7 @@ class Container implements \RecursiveIterator, \Countable
     /**
      * Returns pages in the container
      *
-     * @return Page[]
+     * @return PageInterface[]
      */
     public function getPages(): array
     {
@@ -182,14 +182,14 @@ class Container implements \RecursiveIterator, \Countable
     /**
      * Removes the given page from the container
      *
-     * @param int|Page $page page to remove, either a page instance or a specific page order
+     * @param int|PageInterface $page page to remove, either a page instance or a specific page order
      * @param bool $recursive [optional] whether to remove recursively
      *
      * @return bool whether the removal was successful
      */
-    public function removePage(Page|int $page, bool $recursive = false): bool
+    public function removePage(PageInterface|int $page, bool $recursive = false): bool
     {
-        if ($page instanceof Page) {
+        if ($page instanceof PageInterface) {
             $hash = $page->hashCode();
         } else {
             $this->_sort();
@@ -235,12 +235,12 @@ class Container implements \RecursiveIterator, \Countable
     /**
      * Checks if the container has the given page
      *
-     * @param  Page $page  page to look for
-     * @param bool $recursive  [optional] whether to search recursively. Default is false.
+     * @param PageInterface $page page to look for
+     * @param bool $recursive [optional] whether to search recursively. Default is false.
      *
      * @return bool whether page is in container
      */
-    public function hasPage(Page $page, bool $recursive = false): bool
+    public function hasPage(PageInterface $page, bool $recursive = false): bool
     {
         if (array_key_exists($page->hashCode(), $this->_index)) {
             return true;
@@ -292,9 +292,9 @@ class Container implements \RecursiveIterator, \Countable
      * @param bool $useRegex          [optional] if true PHP's preg_match
      *                                    is used. Default is false.
      *
-     * @return Page|null  matching page or null
+     * @return PageInterface|null  matching page or null
      */
-    public function findOneBy(string $property, mixed $value, bool $useRegex = false): ?Page
+    public function findOneBy(string $property, mixed $value, bool $useRegex = false): ?PageInterface
     {
         $iterator = new \RecursiveIteratorIterator($this, \RecursiveIteratorIterator::SELF_FIRST);
 
@@ -358,7 +358,7 @@ class Container implements \RecursiveIterator, \Countable
      * @param bool $useRegex  [optional] if true PHP's preg_match is used.
      *                           Default is false.
      *
-     * @return Page[] array containing only Page instances
+     * @return PageInterface[] array containing only Page instances
      */
     public function findAllBy(string $property, mixed $value, bool $useRegex = false): array
     {
@@ -440,9 +440,9 @@ class Container implements \RecursiveIterator, \Countable
      * @param bool $useRegex  [optional] if true PHP's preg_match is used.
      *                           Default is false.
      *
-     * @return Page|array<Page>|null  matching page or null
+     * @return PageInterface|array<PageInterface>|null  matching page or null
      */
-    public function findBy(string $property, mixed $value, bool $all = false, bool $useRegex = false): Page|array|null
+    public function findBy(string $property, mixed $value, bool $all = false, bool $useRegex = false): PageInterface|array|null
     {
         if ($all) {
             return $this->findAllBy($property, $value, $useRegex);
@@ -482,7 +482,6 @@ class Container implements \RecursiveIterator, \Countable
 
     /**
      * Returns an array representation of all pages in container
-     *
      */
     public function toArray(): array
     {
@@ -502,7 +501,7 @@ class Container implements \RecursiveIterator, \Countable
      *
      * @throws \Exception
      */
-    public function current(): Page
+    public function current(): PageInterface
     {
         $this->_sort();
         $hash = key($this->_index);
@@ -545,7 +544,7 @@ class Container implements \RecursiveIterator, \Countable
         return $this->hasPages();
     }
 
-    public function getChildren(): ?Page
+    public function getChildren(): ?PageInterface
     {
         $hash = key($this->_index);
 

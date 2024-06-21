@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Navigation\Iterator;
 
 use Pimcore\Navigation\Container;
-use Pimcore\Navigation\Page;
+use Pimcore\Navigation\PageInterface;
 
 /**
  * @internal
@@ -43,7 +43,7 @@ final class PrefixRecursiveFilterIterator extends \RecursiveFilterIterator
 
     public function accept(): bool
     {
-        /** @var Page $page */
+        /** @var PageInterface $page */
         $page = $this->current();
 
         try {
